@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WU Aufnahmeprüfung Wirtschaft — Testsimulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WU Wien – Aufnahmeprüfung Wirtschaft – Prüfungssimulation
+   Design: Amtliches Prüfungsformular / Korrektur-Stempel
+   ============================================================ */
+
+:root{
+  /* --- surfaces --- */
+  --bg:        #11152400;
+  --bg-deep:   #10142a;
+  --bg-soft:   #1b2247;
+  --bg-grid:   #232c58;
+  --paper:     #eeefe8;
+  --paper-2:   #f7f7f2;
+  --paper-line:#cdd0c4;
+  --paper-shadow: rgba(10, 13, 30, .35);
+
+  /* --- ink / text --- */
+  --ink:       #1b2236;
+  --ink-soft:  #545b70;
+  --ink-faint: #8990a6;
+  --on-dark:   #eef0fb;
+  --on-dark-soft: #aab1d6;
+
+  /* --- accents --- */
+  --navy:      #2b3a67;
+  --navy-deep: #1d2a52;
+  --navy-light:#4f63a1;
+  --amber:     #c9962f;
+  --green:     #2f6f4f;
+  --green-bg:  #e4efe8;
+  --red:       #a8392b;
+  --red-bg:    #f3e4e1;
+
+  /* --- type --- */
+  --f-display: "Space Grotesk", "Arial Narrow", sans-serif;
+  --f-body:    "Inter", system-ui, sans-serif;
+  --f-mono:    "IBM Plex Mono", "Courier New", monospace;
+
+  --radius: 3px;
+}
+
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; }
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 18% 12%, var(--bg-grid) 0%, transparent 45%),
+    radial-gradient(circle at 84% 78%, var(--bg-grid) 0%, transparent 50%),
+    var(--bg-deep);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden{ display:none !important; }
+
+a{ color: inherit; }
+
+button{ font-family: inherit; cursor:pointer; }
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible{
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   App shell
+   ============================================================ */
+#app{
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(14px, 4vw, 40px) clamp(12px, 4vw, 28px) 60px;
+}
+
+.masthead{
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--on-dark);
+  padding: 6px 4px 18px;
+  border-bottom: 1px solid rgba(238,240,251,.18);
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.masthead .brand{
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: .01em;
+}
+.masthead .brand small{
+  display:block;
+  font-family: var(--f-mono);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--on-dark-soft);
+  margin-top: 3px;
+}
+.masthead .file-no{
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  color: var(--on-dark-soft);
+  letter-spacing: .04em;
+  text-align: right;
+}
+
+/* ============================================================
+   "Paper" card – the exam-form surface
+   ============================================================ */
+.sheet{
+  position: relative;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0, transparent 27px,
+      var(--paper-line) 27px, var(--paper-line) 28px
+    ),
+    var(--paper);
+  border: 1px solid #d9dbcf;
+  border-radius: var(--radius);
+  box-shadow: 0 18px 50px -12px var(--paper-shadow), 0 2px 0 rgba(255,255,255,.4) inset;
+  padding: clamp(18px, 4vw, 38px);
+}
+.sheet--plain{
+  background: var(--paper);
+}
+
+.tab-corner{
+  position:absolute;
+  top:-10px; right: 22px;
+  background: var(--navy);
+  color: var(--on-dark);
+  font-family: var(--f-mono);
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 5px 10px 4px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* ============================================================
+   Start screen
+   ============================================================ */
+.cover-title{
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 4vw, 2.15rem);
+  font-weight: 600;
+  margin: 4px 0 6px;
+  line-height: 1.18;
+}
+.cover-sub{
+  color: var(--ink-soft);
+  font-size: .98rem;
+  max-width: 56ch;
+  margin: 0 0 22px;
+}
+
+.cover-fields{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap: 0;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 26px;
+  background: var(--paper-2);
+}
+.cover-fields div{
+  padding: 10px 14px;
+  border-right: 1px solid var(--paper-line);
+  border-bottom: 1px solid var(--paper-line);
+}
+.cover-fields div:last-child{ border-right:none; }
+.cover-fields .k{
+  display:block;
+  font-family: var(--f-mono);
+  font-size: .62rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 3px;
+}
+.cover-fields .v{
+  font-family: var(--f-mono);
+  font-size: .85rem;
+  color: var(--ink);
+}
+
+.option-block{ margin-bottom: 24px; }
+.option-block > .label{
+  font-family: var(--f-mono);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink-faint);
+  margin-bottom: 10px;
+  display:block;
+}
+.choice-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+  gap: 10px;
+}
+.choice-card{
+  border: 1.5px solid var(--paper-line);
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  text-align: left;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.choice-card:hover{ border-color: var(--navy-light); }
+.choice-card.active{
+  border-color: var(--navy);
+  background: #e3e7f3;
+}
+.choice-card .t{
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: .95rem;
+  margin-bottom: 2px;
+}
+.choice-card .d{
+  font-size: .78rem;
+  color: var(--ink-soft);
+}
+
+.btn{
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: .92rem;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--navy);
+  background: var(--navy);
+  color: #fff;
+  padding: 13px 26px;
+  letter-spacing: .01em;
+  transition: background .15s, transform .08s, box-shadow .15s;
+}
+.btn:hover{ background: var(--navy-deep); }
+.btn:active{ transform: translateY(1px); }
+.btn[disabled]{ opacity:.45; cursor:not-allowed; }
+.btn--ghost{
+  background: transparent;
+  color: var(--navy);
+}
+.btn--ghost:hover{ background: rgba(43,58,103,.08); }
+.btn--full{ width:100%; text-align:center; display:block; }
+
+.start-actions{
+  display:flex;
+  justify-content: flex-end;
+  align-items:center;
+  gap: 14px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.start-note{
+  font-size: .78rem;
+  color: var(--ink-faint);
+  margin-right: auto;
+}
+
+/* ============================================================
+   Quiz screen
+   ============================================================ */
+.quiz-header{
+  display:flex;
+  align-items:center;
+  gap: 18px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.progress-wrap{ flex: 1 1 220px; }
+.progress-meta{
+  display:flex;
+  justify-content: space-between;
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  color: var(--on-dark-soft);
+  margin-bottom: 6px;
+  letter-spacing: .03em;
+}
+.progress-track{
+  height: 8px;
+  background: rgba(238,240,251,.14);
+  border-radius: 5px;
+  overflow:hidden;
+  position:relative;
+}
+.progress-fill{
+  height:100%;
+  background: linear-gradient(90deg, var(--navy-light), var(--amber));
+  border-radius: 5px;
+  transition: width .25s ease;
+}
+.timer-pill{
+  font-family: var(--f-mono);
+  font-size: .8rem;
+  color: var(--on-dark);
+  background: rgba(238,240,251,.1);
+  border: 1px solid rgba(238,240,251,.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+.timer-pill.low{ border-color: var(--red); color:#ffd9d2; background: rgba(168,57,43,.25); }
+
+.tagrow{
+  display:flex;
+  gap:8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items:center;
+}
+.tag{
+  font-family: var(--f-mono);
+  font-size: .65rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 3px;
+  border: 1px solid var(--paper-line);
+  color: var(--ink-soft);
+  background: var(--paper-2);
+}
+.tag.diff-leicht{ border-color:#b9c6e0; color:#33437a; }
+.tag.diff-mittel{ border-color:#9aa9d6; color:#2b3a67; background:#e3e7f3;}
+.tag.diff-schwer{ border-color:#7c8cc4; color:#fff; background:#2b3a67;}
+.tag.type-case{ border-color: var(--amber); color:#8a6510; background:#f7ecd4; }
+.tag.type-calc{ border-color:#8da08c; color:#2f6f4f; background:#e4efe8; }
+
+.scenario-box{
+  border-left: 4px solid var(--amber);
+  background: #f7f2e3;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .94rem;
+  color: var(--ink);
+}
+.scenario-box .sc-label{
+  font-family: var(--f-mono);
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8a6510;
+  display:block;
+  margin-bottom: 6px;
+}
+.scenario-box p{ margin: 0 0 6px; }
+.scenario-box p:last-child{ margin-bottom:0; }
+
+/* in-question balance sheet */
+.qbilanz{
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  overflow:hidden;
+  margin: 4px 0 18px;
+  font-size: .82rem;
+}
+.qbilanz-head{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  background: var(--navy);
+  color: var(--on-dark);
+  font-family: var(--f-display);
+  font-weight:600;
+  font-size: .76rem;
+}
+.qbilanz-head > div{ padding: 8px 12px; }
+.qbilanz-head .amt{ text-align:right; }
+.qbilanz-body{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr auto;
+}
+.qbilanz-body > div{
+  padding: 7px 12px;
+  border-top: 1px solid var(--paper-line);
+  background: var(--paper-2);
+}
+.qbilanz-body .amt{ text-align:right; font-family: var(--f-mono); }
+.qbilanz-body .grp{ font-weight:700; background: var(--paper); }
+.qbilanz-foot{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  border-top: 2px solid var(--ink);
+  background: var(--paper);
+  font-weight:700;
+  font-family: var(--f-display);
+}
+.qbilanz-foot > div{ padding: 9px 12px; }
+.qbilanz-foot .amt{ text-align:right; font-family: var(--f-mono); }
+.qbilanz .col-sep{ border-left: 1px solid var(--ink); }
+
+@media (max-width: 620px){
+  .qbilanz{ font-size: .74rem; }
+  .qbilanz-head > div, .qbilanz-body > div, .qbilanz-foot > div{ padding: 6px 7px; }
+}
+
+.q-block{
+  padding: 18px 0;
+  border-top: 1px solid var(--paper-line);
+}
+.q-block:first-of-type{ border-top:none; padding-top:0; }
+.q-number{
+  font-family: var(--f-mono);
+  font-size: .68rem;
+  color: var(--ink-faint);
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.q-text{
+  font-family: var(--f-display);
+  font-size: clamp(1.05rem, 2.4vw, 1.28rem);
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0 0 16px;
+}
+.q-hint{
+  font-size: .8rem;
+  color: var(--ink-faint);
+  margin: -10px 0 14px;
+}
+
+/* --- Multiple-True-False statement rows --- */
+.stmt-list{
+  display:flex; flex-direction:column;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  overflow:hidden;
+}
+.stmt{
+  display:grid;
+  grid-template-columns: 38px 1fr 60px;
+  align-items:stretch;
+  border-top: 1px solid var(--paper-line);
+  background: var(--paper-2);
+  text-align:left;
+  width:100%;
+  font-size: .95rem;
+  color: var(--ink);
+  transition: background .12s;
+  padding: 0;
+}
+.stmt:first-child{ border-top:none; }
+.stmt:hover:not([disabled]){ background:#e9ebe2; }
+.stmt .letter{
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-mono);
+  font-size: .8rem;
+  color: var(--ink-faint);
+  background: rgba(0,0,0,.03);
+  border-right: 1px solid var(--paper-line);
+}
+.stmt .body{
+  padding: 13px 14px;
+  line-height:1.45;
+}
+.stmt .check{
+  display:flex; align-items:center; justify-content:center;
+  border-left: 1px solid var(--paper-line);
+}
+.stmt .box{
+  width:22px; height:22px;
+  border-radius: 5px;
+  border: 1.5px solid var(--ink-faint);
+  display:flex; align-items:center; justify-content:center;
+  font-size: .82rem; line-height:1;
+  color:#fff;
+  background: var(--paper-2);
+  transition: background .1s, border-color .1s;
+}
+.stmt.checked .box{ border-color: var(--navy); background: var(--navy); }
+.stmt.checked .box::after{ content:"✓"; }
+
+/* graded states (review) – mirror the WU exam colour key */
+.stmt[disabled]{ cursor:default; }
+.stmt.g-hit   { background: var(--green-bg); }      /* correctly ticked true */
+.stmt.g-hit .check{ background: var(--green-bg); }
+.stmt.g-miss  { background: var(--paper-2); }       /* true, left unticked */
+.stmt.g-wrong { background: var(--red-bg); }        /* false, wrongly ticked */
+.stmt.g-ok    { background: var(--green-bg); }       /* false, correctly left */
+.stmt.g-hit .box, .stmt.g-wrong .box{ }
+.stmt .pts{
+  display:flex; align-items:center; justify-content:flex-end;
+  padding: 0 12px;
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  color: var(--ink-faint);
+  border-left: 1px solid var(--paper-line);
+  white-space:nowrap;
+}
+.stmt.row-graded{ grid-template-columns: 38px 1fr 74px; }
+.stmt .pts.pos{ color: var(--green); }
+.stmt .pts.neg{ color: var(--red); }
+
+.stmt-expl{
+  grid-column: 1 / -1;
+  border-top: 1px dashed var(--paper-line);
+  padding: 10px 14px 12px 52px;
+  font-size: .84rem;
+  color: var(--ink-soft);
+  background: rgba(255,255,255,.4);
+}
+.stmt-expl .v{ color: var(--green); font-weight:600; }
+.stmt-expl .x{ color: var(--red); font-weight:600; }
+
+.points-banner{
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  letter-spacing:.04em;
+  color: var(--on-dark-soft);
+  text-align:right;
+  margin-top: 8px;
+}
+
+.q-scoreline{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top: 14px;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  font-family: var(--f-mono);
+  font-size: .82rem;
+}
+.q-scoreline .lbl{ color: var(--ink-soft); }
+.q-scoreline .val{ font-weight:700; }
+.q-scoreline .val.full{ color: var(--green); }
+.q-scoreline .val.part{ color: var(--amber); }
+.q-scoreline .val.zero{ color: var(--red); }
+
+/* stamp – signature grading mark */
+.stamp{
+  position: absolute;
+  top: -16px;
+  right: 10px;
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 2.5px solid currentColor;
+  border-radius: 4px;
+  transform: rotate(-6deg);
+  background: rgba(255,255,255,.55);
+}
+.stamp.ok{ color: var(--green); }
+.stamp.bad{ color: var(--red); }
+
+.quiz-footer{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  margin-top: 22px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.quiz-footer .spacer{ flex:1; }
+
+/* ============================================================
+   Results screen
+   ============================================================ */
+.score-hero{
+  display:flex;
+  align-items:center;
+  gap: 26px;
+  flex-wrap:wrap;
+  margin-bottom: 26px;
+}
+.score-circle{
+  width: 130px; height:130px;
+  border-radius:50%;
+  border: 8px solid var(--navy);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background: var(--paper-2);
+  flex-shrink:0;
+}
+.score-circle .num{
+  font-family: var(--f-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height:1;
+}
+.score-circle .pct{ font-family: var(--f-mono); font-size:.7rem; color:var(--ink-faint); }
+.score-headline h2{
+  font-family: var(--f-display);
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+}
+.score-headline p{ margin:0; color: var(--ink-soft); max-width: 48ch; }
+
+.balance-title{
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align:center;
+  margin: 10px 0 4px;
+}
+.balance-sheet{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  overflow:hidden;
+  margin-bottom: 26px;
+}
+.balance-col{ background: var(--paper-2); }
+.balance-col + .balance-col{ border-left: 1px solid var(--ink); }
+.balance-head{
+  font-family: var(--f-display);
+  font-weight:700;
+  font-size: .82rem;
+  letter-spacing:.04em;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ink);
+  background: var(--paper);
+}
+.balance-head.aktiva{ color: var(--green); }
+.balance-head.passiva{ color: var(--red); }
+.balance-row{
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: .87rem;
+}
+.balance-row:last-child{ border-bottom:none; }
+.balance-row .name{ color: var(--ink); }
+.balance-row .pct{ font-family: var(--f-mono); color: var(--ink-soft); flex-shrink:0; }
+.balance-empty{
+  padding: 14px;
+  font-size: .8rem;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+.balance-foot{
+  display:flex;
+  justify-content:space-between;
+  padding: 10px 14px;
+  font-family: var(--f-mono);
+  font-size: .78rem;
+  border-top: 2px solid var(--ink);
+  background: var(--paper);
+  grid-column: 1 / -1;
+}
+
+.tips{
+  background: var(--paper-2);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 26px;
+}
+.tips h3{
+  font-family: var(--f-display);
+  font-size: .95rem;
+  margin: 0 0 10px;
+}
+.tips ul{ margin:0; padding-left: 1.2em; }
+.tips li{ margin-bottom: 6px; font-size: .9rem; }
+
+.review-list{ display:flex; flex-direction:column; gap: 14px; }
+.review-item{
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: var(--paper-2);
+}
+.review-item .rh{
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  align-items:flex-start;
+  margin-bottom: 8px;
+}
+.review-item .rq{ font-weight:600; font-size:.92rem; }
+.review-item .ra{ font-size: .85rem; color: var(--ink-soft); margin: 3px 0; }
+.review-item .re{ font-size: .83rem; color: var(--ink-soft); border-top:1px dashed var(--paper-line); padding-top:7px; margin-top:7px;}
+.badge-result{
+  font-family: var(--f-mono);
+  font-size: .65rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  flex-shrink:0;
+}
+.badge-result.ok{ background: var(--green-bg); color: var(--green); }
+.badge-result.bad{ background: var(--red-bg); color: var(--red); }
+
+details.review-toggle > summary{
+  cursor:pointer;
+  font-family: var(--f-display);
+  font-weight:600;
+  color: var(--navy);
+  padding: 4px 0;
+  list-style: none;
+}
+details.review-toggle > summary::-webkit-details-marker{ display:none; }
+details.review-toggle > summary::before{
+  content: "▸ ";
+}
+details.review-toggle[open] > summary::before{
+  content: "▾ ";
+}
+
+footer.legal{
+  text-align:center;
+  color: var(--on-dark-soft);
+  font-size: .72rem;
+  margin-top: 36px;
+  line-height:1.6;
+}
+
+@media (max-width: 560px){
+  .balance-sheet{ grid-template-columns: 1fr; }
+  .balance-col + .balance-col{ border-left:none; border-top:1px solid var(--ink); }
+  .score-hero{ justify-content:center; text-align:center; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="masthead">
+    <div class="brand">WU&nbsp;Wien · Wirtschaft verstehen<small>Aufnahmeprüfung — Testsimulation</small></div>
+    <div class="file-no" id="file-no"></div>
+  </header>
+  <main id="view"></main>
+  <footer class="legal">
+    Inoffizielle Übungssimulation auf Basis der Lernunterlage „Wirtschaft verstehen“ (WU&nbsp;Wien, Studienjahr&nbsp;2026/27).<br>
+    Kein offizielles Produkt der Wirtschaftsuniversität Wien. Alle Angaben ohne Gewähr.
+  </footer>
+</div>
+<script>
+/* ============================================================
+   Fragenpool – WU Wien Aufnahmeprüfung Wirtschaftsteil
+   Format: Multiple-True-False (Aussagenbewertung) wie im
+   echten Aufnahmetest. Jede Aufgabe: 4 Punkte.
+   Bewertung pro Aufgabe:
+     + 4/nWahr   je korrekt angekreuzter wahrer Aussage
+     - 4/nFalsch je falsch angekreuzter falscher Aussage
+     (Aufgabenergebnis kann nicht unter 0 fallen)
+   Quelle: "Wirtschaft verstehen", WU Wien, Studienjahr 2026/27.
+   Erklärungstexte eigenständig formuliert.
+   ============================================================ */
+
+const TOPICS = {
+  grundlagen:      { label: "Wirtschaftliche Grundlagen",          short: "Grundlagen" },
+  nachhaltigkeit:  { label: "Wirtschaft, Gesellschaft & Nachhaltigkeit", short: "Nachhaltigkeit" },
+  unternehmen:     { label: "Unternehmen & Rechtsformen",          short: "Unternehmen" },
+  finanzierung:    { label: "Finanzierung & Investition",          short: "Finanzierung" },
+  rechnungswesen:  { label: "Rechnungswesen & Bilanz",             short: "Rechnungswesen" },
+  marketing:       { label: "Marketing",                           short: "Marketing" },
+  digitalisierung: { label: "Digitalisierung",                     short: "Digitalisierung" }
+};
+
+/* Helper for balance-sheet display (used by some case questions) */
+function bilanz(aktiva, passiva, summe){ return { aktiva, passiva, summe }; }
+
+const QUESTION_POOL = [
+
+/* ============================================================
+   GRUNDLAGEN
+   ============================================================ */
+{ id:"g1", topic:"grundlagen", difficulty:"mittel",
+  title:"Markt- und Wettbewerbsformen",
+  stem:"Welche der folgenden Aussagen zu Marktformen und Wettbewerb ist/sind korrekt?",
+  statements:[
+    { text:"Ein Monopson liegt vor, wenn es einen einzigen Anbieter und viele Nachfrager gibt.", correct:false,
+      explain:"Falsch. Ein einziger Anbieter und viele Nachfrager ergeben ein Monopol. Beim Monopson ist es umgekehrt: ein einziger Nachfrager und viele Anbieter." },
+    { text:"Im vollkommenen Wettbewerb (Polypol) ist – zumindest theoretisch – kein einzelner Teilnehmer in der Lage, den Preis zu beeinflussen.", correct:true,
+      explain:"Richtig. Beim vollkommenen Wettbewerb gibt es so viele Anbieter und Nachfrager, dass theoretisch niemand den Preis beeinflussen kann; zudem werden vollkommene Transparenz und fehlende Präferenzen angenommen." },
+    { text:"Preisabsprachen zwischen den Anbietern eines Oligopols (Kartelle) sind in der Regel gesetzeswidrig.", correct:true,
+      explain:"Richtig. Wettbewerbsregeln sollen den Wettbewerb ermöglichen, weil das im Regelfall günstig für die Kund:innen ist; Kartellabsprachen sind daher grundsätzlich verboten." },
+    { text:"Ein Patent ist ein Beispiel dafür, dass der Staat einem Unternehmen gezielt für eine begrenzte Zeit eine Monopolstellung einräumt.", correct:true,
+      explain:"Richtig. Patente sind eine bewusste Ausnahme: Sie geben als Innovationsanreiz für eine gewisse Zeit ein gesetzlich erlaubtes Monopol auf eine Erfindung." },
+    { text:"Ein Theaterbuffet, das während der Pause die einzige Erfrischungsmöglichkeit ist, befindet sich in einer monopolartigen Stellung.", correct:true,
+      explain:"Richtig. Auch ohne formales Monopol kann eine monopolartige Stellung bestehen, wenn es situativ keine Alternative gibt – das spiegelt sich oft im Preisniveau wider." }
+  ]
+},
+
+{ id:"g2", topic:"grundlagen", difficulty:"schwer",
+  title:"Angebot, Nachfrage und Preisbildung",
+  stem:"Welche der folgenden Aussagen zur Preisbildung am Markt ist/sind korrekt?",
+  statements:[
+    { text:"Im Gleichgewichtspreis (Markträumungspreis) entspricht die angebotene genau der nachgefragten Menge.", correct:true,
+      explain:"Richtig. Beim Gleichgewichtspreis wird der Markt vollständig geräumt – es gibt typischerweise keine Preistendenz nach oben oder unten." },
+    { text:"Steigt das Einkommen der Nachfrager, verschiebt sich die Nachfragekurve typischerweise nach links.", correct:false,
+      explain:"Falsch. Bei steigendem Einkommen können sich mehr Menschen das Gut leisten – die Nachfragekurve verschiebt sich nach rechts, nicht nach links." },
+    { text:"Ein Preis unterhalb des Gleichgewichtspreises führt tendenziell zu einem Angebotsüberhang.", correct:false,
+      explain:"Falsch. Ein zu niedriger Preis lässt die Nachfrage steigen und das Angebot sinken – es entsteht ein Nachfrageüberhang bzw. eine Fehlmenge. Ein Angebotsüberhang entsteht bei einem zu hohen Preis." },
+    { text:"Unter ceteris-paribus-Bedingungen gilt bei den meisten Gütern: je höher der Preis, desto geringer die nachgefragte Menge.", correct:true,
+      explain:"Richtig. Das ist der typische Verlauf der Nachfragefunktion: Mit steigendem Preis sinkt die nachgefragte Menge (und umgekehrt)." },
+    { text:"Die Grenzkosten bezeichnen die Kosten für die Herstellung einer zusätzlichen Einheit eines Gutes.", correct:true,
+      explain:"Richtig. Grenzkosten sind die Kosten der jeweils nächsten produzierten Einheit. Für viele Unternehmen steigen sie mit zunehmender Produktionsmenge." }
+  ]
+},
+
+{ id:"g3", topic:"grundlagen", difficulty:"schwer",
+  title:"Geld, Währung und Inflation",
+  stem:"Welche der folgenden Aussagen zu Geld und Inflation ist/sind korrekt?",
+  statements:[
+    { text:"Buchgeld (Giralgeld) ist physisch in Form von Münzen und Banknoten vorhanden.", correct:false,
+      explain:"Falsch. Buchgeld existiert nur als Eintrag auf einem Konto und ist gerade NICHT physisch greifbar – im Gegensatz zu Bargeld." },
+    { text:"Der Binnenwert einer Währung bezieht sich auf die Kaufkraft im Inland, der Außenwert auf das Verhältnis zu Fremdwährungen.", correct:true,
+      explain:"Richtig. Der Binnenwert betrifft, wie viele Güter im Inland für einen Geldbetrag gekauft werden können; der Außenwert betrifft das Verhältnis zu anderen Währungen." },
+    { text:"Zur Bekämpfung von Inflation senken Zentralbanken in der Regel das Zinsniveau.", correct:false,
+      explain:"Falsch. Zur Inflationsbekämpfung werden die Zinsen in der Regel ERHÖHT. Teurere Kredite reduzieren die Kreditvergabe und damit das Geldmengenwachstum." },
+    { text:"Die Europäische Zentralbank (EZB) sieht eine Inflationsrate von rund 2 % pro Jahr als bestmöglich für die Preisstabilität an.", correct:true,
+      explain:"Richtig. Eine Inflation nahe 2 % gilt als förderlich; eine deutlich niedrigere Rate birgt die Gefahr einer dämpfenden Deflationserwartung." },
+    { text:"Bei einer Deflation steigt der Wert des Geldes, weil das allgemeine Preisniveau sinkt.", correct:true,
+      explain:"Richtig. Bei Deflation sinken die Preise, wodurch die Kaufkraft – und damit der Wert des Geldes – steigt. Das kann Käufe aufschieben und die Wirtschaft dämpfen." }
+  ]
+},
+
+{ id:"g4", topic:"grundlagen", difficulty:"schwer",
+  title:"BIP und BNP",
+  stem:"Welche der folgenden Aussagen zum Bruttoinlandsprodukt (BIP) und Bruttonationalprodukt (BNP) ist/sind korrekt?",
+  statements:[
+    { text:"Bei der Berechnung des BIP werden Vorleistungen abgezogen, um Doppelzählungen zu vermeiden.", correct:true,
+      explain:"Richtig. Vom Marktwert des Endprodukts wird der Wert der Vorleistungen abgezogen, damit Vorprodukte nicht doppelt erfasst werden." },
+    { text:"Das reale BIP ist das um die Inflation bereinigte nominelle BIP.", correct:true,
+      explain:"Richtig. Das nominelle BIP wird zu aktuellen Preisen ermittelt; um die Inflation bereinigt ergibt es das reale BIP, das für das reale Wirtschaftswachstum herangezogen wird." },
+    { text:"Das BIP erfasst auch die unentgeltliche Pflege- und Sorgearbeit durch Angehörige.", correct:false,
+      explain:"Falsch. Eigenproduktionen ohne konkreten Marktwert, wie unbezahlte Pflege- und Sorgearbeit, werden vom BIP gerade nicht erfasst." },
+    { text:"Das Einkommen einer aus Deutschland nach Österreich einpendelnden Person zählt zum österreichischen BIP, aber nicht zum österreichischen BNP.", correct:true,
+      explain:"Richtig. Das BIP erfasst die im Inland erzielten Einkommen unabhängig von der Staatsangehörigkeit; das BNP erfasst nur Einkommen von Inländer:innen." },
+    { text:"Ein höheres nominelles BIP bedeutet immer auch ein reales Wirtschaftswachstum.", correct:false,
+      explain:"Falsch. Ein höheres nominelles BIP kann auch allein durch gestiegene Preise (Inflation) entstehen, ohne dass real mehr produziert wurde." }
+  ]
+},
+
+{ id:"g5", topic:"grundlagen", difficulty:"mittel",
+  title:"Knappheit und Opportunitätskosten",
+  stem:"Welche der folgenden Aussagen zu Knappheit und Opportunitätskosten ist/sind korrekt?",
+  statements:[
+    { text:"Opportunitätskosten sind der entgangene Ertrag oder Nutzen der Handlungsalternative, auf die zugunsten einer anderen verzichtet wurde.", correct:true,
+      explain:"Richtig. Genau so sind Opportunitätskosten definiert – als der Wert der besten nicht gewählten Alternative." },
+    { text:"Weil Ressourcen knapp sind, muss bei jeder Verwendung entschieden werden, auf welche alternative Nutzung verzichtet wird.", correct:true,
+      explain:"Richtig. Knappheit zwingt zu Entscheidungen über den Einsatz begrenzter Ressourcen – das ist der Kern des Wirtschaftens." },
+    { text:"Opportunitätskosten entstehen nur bei Unternehmen, nicht bei privaten Haushalten.", correct:false,
+      explain:"Falsch. Auch private Haushalte haben Opportunitätskosten, etwa wenn sie ihre Zeit für das Lernen statt für ein Hobby einsetzen." },
+    { text:"Der kalkulatorische Unternehmerlohn kann sich an den Opportunitätskosten der Unternehmerin orientieren.", correct:true,
+      explain:"Richtig. Der Unternehmerlohn orientiert sich an dem Einkommen, das die Unternehmerin in einer anderen Tätigkeit verdienen könnte – also an ihren Opportunitätskosten." },
+    { text:"Opportunitätskosten lassen sich immer eindeutig in Geld ausdrücken.", correct:false,
+      explain:"Falsch. Manche entgangenen Nutzen – etwa Erholung oder Freude an einer Freizeitbeschäftigung – lassen sich nicht einfach in Geldwert ausdrücken." }
+  ]
+},
+
+
+/* ============================================================
+   NACHHALTIGKEIT
+   ============================================================ */
+{ id:"n1", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Schwache und starke Nachhaltigkeit",
+  stem:"Welche der folgenden Aussagen zu Nachhaltigkeitskonzepten ist/sind korrekt?",
+  statements:[
+    { text:"Die schwache Nachhaltigkeit beruht auf dem Drei-Säulen-Modell, das Ökologie, Soziales und Ökonomie als gleichwertige Säulen betrachtet.", correct:true,
+      explain:"Richtig. Schwache Nachhaltigkeit fußt auf dem Drei-Säulen-Modell mit drei gleichwertigen, untereinander ausgleichbaren Bereichen." },
+    { text:"Die starke Nachhaltigkeit geht davon aus, dass Naturkapital beliebig durch Sach- oder Humankapital ersetzt werden kann.", correct:false,
+      explain:"Falsch. Diese Annahme der Ersetzbarkeit gehört zur SCHWACHEN Nachhaltigkeit. Die starke Nachhaltigkeit lehnt die Substituierbarkeit von Naturkapital gerade ab." },
+    { text:"Nach dem Konzept der schwachen Nachhaltigkeit können Verluste in einem Bereich grundsätzlich durch Gewinne in einem anderen ausgeglichen werden.", correct:true,
+      explain:"Richtig. Solange die Gesamtsumme aller Kapitalarten konstant bleibt oder wächst, gilt das nach schwacher Nachhaltigkeit als zulässig." },
+    { text:"Die starke Nachhaltigkeit betrachtet bestimmte ökologische Funktionen, etwa ein stabiles Klima, als unverzichtbar und nicht ersetzbar.", correct:true,
+      explain:"Richtig. Genau das ist der Kerngedanke der starken Nachhaltigkeit." },
+    { text:"Starke Nachhaltigkeit gilt als weniger anspruchsvoll als schwache Nachhaltigkeit.", correct:false,
+      explain:"Falsch. Starke Nachhaltigkeit ist deutlich anspruchsvoller, weil sie keine Kompensation von Naturkapital zulässt." }
+  ]
+},
+
+{ id:"n2", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Planetare Grenzen",
+  stem:"Welche der folgenden Aussagen zum Konzept der planetaren Grenzen (Planetary Boundaries) ist/sind korrekt?",
+  statements:[
+    { text:"Das Konzept identifiziert insgesamt neun zentrale Erdsystemgrenzen.", correct:true,
+      explain:"Richtig. Es wurden neun Erdsystemgrenzen identifiziert, quantifiziert und mit Grenzwerten versehen." },
+    { text:"Laut der in der Lernunterlage zitierten Synthese (Stand 2025) sind alle neun planetaren Grenzen bereits überschritten.", correct:false,
+      explain:"Falsch. Sieben der neun Grenzen sind überschritten. Das stratosphärische Ozon und – global betrachtet – die Aerosolbelastung liegen noch im sicheren Bereich." },
+    { text:"Das stratosphärische Ozon liegt – auch dank des Montreal-Protokolls – noch innerhalb des sicheren Bereichs.", correct:true,
+      explain:"Richtig. Die internationale Politik (Montreal-Protokoll) hat zu einer erfolgreichen Regeneration der Ozonschicht beigetragen." },
+    { text:"Die 1,5-Grad-Grenze ist eine exakte, rein biophysikalische Grenze ohne politische Komponente.", correct:false,
+      explain:"Falsch. Die 1,5-Grad-Grenze wird eher als politisch gewählte Risikoschwelle verstanden, nicht als absolute biophysikalische Grenze." },
+    { text:"Ziel des Konzepts ist es, einen 'sicheren Handlungsraum' (safe operating space) für die Menschheit zu definieren.", correct:true,
+      explain:"Richtig. Das Konzept will einen sicheren Handlungsraum abstecken, in dem sich sozioökonomische Aktivitäten entwickeln können, ohne planetare Systeme zu destabilisieren." }
+  ]
+},
+
+{ id:"n3", topic:"nachhaltigkeit", difficulty:"mittel",
+  title:"Kreislaufwirtschaft und externe Kosten",
+  stem:"Welche der folgenden Aussagen zu Kreislaufwirtschaft und externen Kosten ist/sind korrekt?",
+  statements:[
+    { text:"Das lineare Wirtschaftsmodell folgt dem Prinzip 'Take – Make – Waste'.", correct:true,
+      explain:"Richtig. Im linearen Modell werden Rohstoffe entnommen, zu Produkten verarbeitet, konsumiert und anschließend entsorgt." },
+    { text:"Externe Kosten, etwa durch Umweltschäden, werden vom verursachenden Unternehmen selbst getragen.", correct:false,
+      explain:"Falsch. Externe Kosten werden gerade NICHT vom Verursacher getragen, sondern auf die Gesellschaft oder künftige Generationen abgewälzt." },
+    { text:"Die Kreislaufwirtschaft zielt darauf ab, den Wert von Ressourcen möglichst lange im Wirtschaftskreislauf zu erhalten.", correct:true,
+      explain:"Richtig. Durch Wiederverwendung, Reparatur und Recycling sollen Abfälle minimiert und der Ressourcenwert lange erhalten werden." },
+    { text:"Ein niedriger Ressourcenverbrauch aufgrund von Armut ist gleichbedeutend mit nachhaltigem Leben.", correct:false,
+      explain:"Falsch. Armut ist kein Nachhaltigkeitsideal; ein niedriger Verbrauch durch Armut bedeutet oft eingeschränkte Lebensqualität und Teilhabe." },
+    { text:"Reparaturbonus und Urban Mining sind Konzepte, die mit der Kreislaufwirtschaft verwandt sind.", correct:true,
+      explain:"Richtig. Beide zählen zu den mit der Kreislaufwirtschaft verwandten Ansätzen, ebenso wie Circular Design und langlebige Produkte." }
+  ]
+},
+
+
+/* ============================================================
+   UNTERNEHMEN & RECHTSFORMEN
+   ============================================================ */
+{ id:"u1", topic:"unternehmen", difficulty:"schwer",
+  title:"Haftung in den Rechtsformen",
+  scenario:"Vergleichen Sie die Haftung der Gesellschafter:innen in den verschiedenen Rechtsformen.",
+  stem:"Welche der folgenden Aussagen zur Haftung ist/sind korrekt?",
+  statements:[
+    { text:"Ein Einzelunternehmer haftet nur mit dem betrieblichen Vermögen, nicht aber mit dem Privatvermögen.", correct:false,
+      explain:"Falsch. Der Einzelunternehmer haftet unbeschränkt, also auch mit seinem gesamten Privatvermögen." },
+    { text:"In einer Offenen Gesellschaft (OG) haftet jede:r Gesellschafter:in solidarisch mit dem gesamten Privatvermögen für den Gesamtbetrag der Schulden.", correct:true,
+      explain:"Richtig. Alle OG-Gesellschafter:innen haften persönlich, unbeschränkt und solidarisch für die gesamten Schulden." },
+    { text:"Der Kommanditist einer KG haftet nur bis zur Höhe seiner Einlage.", correct:true,
+      explain:"Richtig. Der Kommanditist trägt eine beschränkte Haftung in Höhe seiner Kapitaleinlage und arbeitet typischerweise nicht im Unternehmen mit." },
+    { text:"Aktionäre einer AG haften persönlich mit ihrem Privatvermögen für die Schulden der Gesellschaft.", correct:false,
+      explain:"Falsch. Aktionäre haften nicht persönlich; sie riskieren nur das in den Aktienkauf investierte Kapital." },
+    { text:"Der Komplementär einer KG ist hinsichtlich Haftung und Mitarbeit mit einem OG-Gesellschafter vergleichbar.", correct:true,
+      explain:"Richtig. Der Komplementär haftet unbeschränkt und führt – wie ein OG-Gesellschafter – die Geschäfte." }
+  ]
+},
+
+{ id:"u2", topic:"unternehmen", difficulty:"schwer",
+  title:"Kapital und Mindestkapital",
+  stem:"Welche der folgenden Aussagen zum Kapital von Gesellschaften ist/sind korrekt?",
+  statements:[
+    { text:"Das gesetzliche Mindeststammkapital einer GmbH beträgt seit 1.1.2024 10.000 Euro.", correct:true,
+      explain:"Richtig. Seit 1.1.2024 sind es 10.000 Euro (zuvor 35.000 Euro)." },
+    { text:"Das Mindestgrundkapital einer Aktiengesellschaft (AG) beträgt 35.000 Euro.", correct:false,
+      explain:"Falsch. Das Mindestgrundkapital einer AG beträgt 70.000 Euro. 35.000 Euro war das frühere GmbH-Mindeststammkapital." },
+    { text:"Bei der Flexiblen Kapitalgesellschaft (FlexKapG) beträgt die Mindesthöhe einer einzelnen Stammeinlage nur 1 Euro.", correct:true,
+      explain:"Richtig. Bei der FlexKapG genügt eine Mindeststammeinlage von 1 Euro (bei der GmbH sind es 70 Euro)." },
+    { text:"Für ein Einzelunternehmen und eine OG gibt es kein gesetzliches Mindestkapital.", correct:true,
+      explain:"Richtig. Weder das Einzelunternehmen noch die OG kennen ein gesetzliches Mindestkapital." },
+    { text:"Bei der GmbH muss das gesamte Stammkapital zwingend in bar aufgebracht werden.", correct:false,
+      explain:"Falsch. Zumindest die Hälfte des Stammkapitals ist in Geld aufzubringen; der Rest kann auch als Sacheinlage (z. B. Computer, Auto) geleistet werden." }
+  ]
+},
+
+{ id:"u3", topic:"unternehmen", difficulty:"mittel",
+  title:"Firmenbuch, Sektoren und Größe",
+  stem:"Welche der folgenden Aussagen zu Firmenbuch, Wirtschaftssektoren und Unternehmensgröße ist/sind korrekt?",
+  statements:[
+    { text:"OG, KG, GmbH und AG müssen unabhängig von ihrer Größe ins Firmenbuch eingetragen werden.", correct:true,
+      explain:"Richtig. Diese Rechtsformen (sowie Genossenschaften) sind unabhängig von der Größe eintragungspflichtig." },
+    { text:"Ein Einzelunternehmen muss bereits ab dem ersten Euro Umsatz zwingend ins Firmenbuch eingetragen werden.", correct:false,
+      explain:"Falsch. Ein Einzelunternehmen muss erst ab einer bestimmten Umsatzgrenze eingetragen werden (mehr als 700.000 Euro in zwei Folgejahren bzw. über 1 Mio. Euro in einem Jahr)." },
+    { text:"Ein landwirtschaftlicher Betrieb, der Obst anbaut und erntet, zählt zum primären Sektor.", correct:true,
+      explain:"Richtig. Rohstoffgewinnung, Land- und Forstwirtschaft zählen zum primären Sektor." },
+    { text:"Ein mittleres Unternehmen hat laut EU-Definition bis zu 249 Mitarbeiter:innen.", correct:true,
+      explain:"Richtig. Mittlere Unternehmen reichen bis 249 Mitarbeiter:innen; ab 250 spricht man von Großunternehmen." },
+    { text:"In Österreich sind rund 50 % aller Unternehmen Einzelunternehmen.", correct:false,
+      explain:"Falsch. Rund 85 % aller Unternehmen in Österreich sind Einzelunternehmen; etwa jedes zehnte ist eine GmbH." }
+  ]
+},
+
+{ id:"u4", topic:"unternehmen", difficulty:"mittel",
+  title:"Genossenschaft und Unternehmensorgane",
+  stem:"Welche der folgenden Aussagen zur Genossenschaft und zu Unternehmensorganen ist/sind korrekt?",
+  statements:[
+    { text:"Bei einer Genossenschaft gilt grundsätzlich das Kopfstimmrecht – jedes Mitglied hat unabhängig vom Kapitalanteil eine Stimme.", correct:true,
+      explain:"Richtig. Das Kopfstimmrecht ist ein Kennzeichen der Genossenschaft; die Satzung kann aber abweichende Regelungen vorsehen." },
+    { text:"Genossenschaften benötigen ein gesetzliches Mindestkapital von 70.000 Euro.", correct:false,
+      explain:"Falsch. Für Genossenschaften ist kein Mindestkapital notwendig; die Mitglieder beteiligen sich mit einer Kapitaleinlage." },
+    { text:"Die Vorstandsmitglieder einer AG werden vom Aufsichtsrat bestellt und auch abberufen.", correct:true,
+      explain:"Richtig. Der Aufsichtsrat bestellt und beruft den Vorstand; der Vorstand führt die Geschäfte in eigener Verantwortung." },
+    { text:"Das oberste Organ einer Genossenschaft ist die Hauptversammlung.", correct:true,
+      explain:"Richtig. In der Hauptversammlung wird über die wesentlichen Entscheidungen der Genossenschaft abgestimmt." },
+    { text:"Im Vordergrund einer Genossenschaft steht die Gewinnmaximierung für externe Investoren.", correct:false,
+      explain:"Falsch. Im Vordergrund steht die Förderung des Erwerbs und der Wirtschaft der Mitglieder, nicht die Gewinnmaximierung für externe Investoren." }
+  ]
+},
+
+
+/* ============================================================
+   FINANZIERUNG & INVESTITION
+   ============================================================ */
+{ id:"f1", topic:"finanzierung", difficulty:"mittel",
+  title:"Eigen- und Fremdkapital",
+  scenario:"Ein wachsendes Unternehmen vergleicht die Finanzierung über zusätzliches Eigenkapital mit der Aufnahme eines Bankkredits (Fremdkapital).",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Eigenkapital muss in der Regel nicht zurückgezahlt werden und steht dem Unternehmen meist unbefristet zur Verfügung.", correct:true,
+      explain:"Richtig. Eigenkapital ist langfristig (in der Regel unbefristet) verfügbar und muss nicht zurückgezahlt werden – daher geeignet für langfristige Investitionen." },
+    { text:"Für Fremdkapital sind in der Regel Zinsen zu zahlen, und das Kapital ist zurückzuzahlen.", correct:true,
+      explain:"Richtig. Fremdkapital steht meist nur befristet zur Verfügung, ist zu verzinsen und muss zurückgezahlt werden." },
+    { text:"Fremdkapitalgeber:innen haben in der Regel ein umfassendes Mitspracherecht bei der Unternehmensführung.", correct:false,
+      explain:"Falsch. Fremdkapitalgeber:innen haben in der Regel kein Mitspracherecht bei der Unternehmensführung." },
+    { text:"Werden Gewinne im Unternehmen belassen (thesauriert), erhöht das das Eigenkapital.", correct:true,
+      explain:"Richtig. Einbehaltene Gewinne erhöhen das Eigenkapital und stärken die Innenfinanzierungskraft." },
+    { text:"Für Eigenkapital müssen auch in Verlustjahren verpflichtend feste Zinsen gezahlt werden.", correct:false,
+      explain:"Falsch. Für Eigenkapital fallen keine fixen Zinsen an; Auszahlungen an Eigenkapitalgeber:innen erfolgen nur bei Gewinnen und sind nicht verpflichtend." }
+  ]
+},
+
+{ id:"f2", topic:"finanzierung", difficulty:"schwer",
+  title:"Innen- und Außenfinanzierung",
+  stem:"Welche der folgenden Aussagen zur Innen- und Außenfinanzierung ist/sind korrekt?",
+  statements:[
+    { text:"Die Selbstfinanzierung durch einbehaltene Gewinne ist eine Form der Innenfinanzierung.", correct:true,
+      explain:"Richtig. Stammt die Finanzierungsquelle aus dem Umsatz des Unternehmens, handelt es sich um Innenfinanzierung; die Selbstfinanzierung ist deren wichtigste Form." },
+    { text:"Die Ausgabe neuer Aktien (Emission) ist eine Form der Innenfinanzierung.", correct:false,
+      explain:"Falsch. Die Aktienemission führt dem Unternehmen Kapital von außen zu und ist daher Außenfinanzierung (mit Eigenkapital)." },
+    { text:"Abschreibungen und das Bilden von Rückstellungen können einen Innenfinanzierungseffekt haben.", correct:true,
+      explain:"Richtig. Beide mindern den Gewinn, stellen aber keine sofortige Auszahlung dar – die Mittel bleiben bis zur tatsächlichen Verwendung im Unternehmen." },
+    { text:"Ein Lieferantenkredit (Lieferverbindlichkeit) ist eine Form der Außenfinanzierung mit Fremdkapital.", correct:true,
+      explain:"Richtig. Wird 'auf Ziel' bezahlt, finanzieren die Lieferant:innen das Unternehmen kurzfristig von außen mit Fremdkapital." },
+    { text:"Selbstfinanzierung macht ein Unternehmen tendenziell abhängiger von Fremdkapitalgebern.", correct:false,
+      explain:"Falsch. Selbstfinanzierung macht ein Unternehmen gerade WENIGER abhängig von Fremdkapitalgebern und krisenresistenter." }
+  ]
+},
+
+{ id:"f3", topic:"finanzierung", difficulty:"schwer",
+  title:"Aktien und Anleihen",
+  stem:"Welche der folgenden Aussagen zu Aktien und Anleihen ist/sind korrekt?",
+  statements:[
+    { text:"Eine Aktie verbrieft ein Anteilsrecht am Grundkapital einer Aktiengesellschaft.", correct:true,
+      explain:"Richtig. Die Aktie ist ein Wertpapier, das einen Anteil am Grundkapital der AG verbrieft (Eigenkapital)." },
+    { text:"Eine Anleihe verbrieft ein Forderungsrecht gegenüber dem Emittenten und stellt damit Fremdkapital dar.", correct:true,
+      explain:"Richtig. Die Anleihe verbrieft eine Forderung gegenüber dem Emittenten (Staat oder Unternehmen) und ist Fremdkapital." },
+    { text:"Beim Handel bereits ausgegebener Aktien zwischen Anleger:innen entsteht ein zusätzlicher Finanzierungseffekt für die AG.", correct:false,
+      explain:"Falsch. Ein Finanzierungseffekt entsteht nur bei der Emission. Beim späteren Handel zwischen Anleger:innen profitiert die AG nicht; nur die Verkäufer:innen erzielen ggf. Kursgewinne." },
+    { text:"Anleihen können fix oder variabel verzinst sein; variabel verzinste Anleihen werden auch 'Floater' genannt.", correct:true,
+      explain:"Richtig. Bei variabler Verzinsung wird der Zinssatz an das allgemeine Zinsniveau (z. B. den Euribor) angepasst – solche Anleihen heißen 'Floater'." },
+    { text:"Eine Rückzahlung des Aktienkapitals an die Aktionäre ist gesetzlich vorgeschrieben und erfolgt am Ende einer festen Laufzeit.", correct:false,
+      explain:"Falsch. Eine Rückzahlung des Aktienkapitals ist nicht vorgesehen – Aktien stellen unbefristet zur Verfügung gestelltes Kapital dar und haben keine feste Laufzeit." }
+  ]
+},
+
+{ id:"f4", topic:"finanzierung", difficulty:"schwer",
+  title:"Cashflow einer Grazer GmbH kurzfristig erhöhen",
+  scenario:"Die GrünGarten GmbH mit Sitz in Graz handelt mit Gartengeräten und möchte kurzfristig ihren Cashflow (Zahlungsmittelzufluss) erhöhen. Mit welchen Maßnahmen ist dies für diese Gesellschaft möglich?",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Die GrünGarten GmbH nimmt eine weitere Gesellschafterin auf, die eine zusätzliche Kapitaleinlage in bar leistet.", correct:true,
+      explain:"Richtig. Eine zusätzliche Bareinlage führt dem Unternehmen sofort liquide Mittel zu und erhöht den Cashflow." },
+    { text:"Die GrünGarten GmbH gewährt ihren Kund:innen kein Zahlungsziel mehr; sie müssen sofort bezahlen.", correct:true,
+      explain:"Richtig. Kürzere bzw. keine Zahlungsziele für Kund:innen beschleunigen den Zahlungsmittelzufluss und erhöhen kurzfristig den Cashflow." },
+    { text:"Die GrünGarten GmbH kauft eine bisher um 1.200 EUR pro Monat gemietete Maschine sofort für 60.000 EUR in bar.", correct:false,
+      explain:"Falsch. Ein sofortiger Barkauf ist ein MittelABfluss – er senkt den Cashflow kurzfristig, statt ihn zu erhöhen." },
+    { text:"Die GrünGarten GmbH nimmt bei ihrer Hausbank einen kurzfristigen Kredit über 80.000 EUR auf.", correct:true,
+      explain:"Richtig. Ein Bankkredit führt dem Unternehmen sofort liquide Mittel zu und erhöht damit den Cashflow." },
+    { text:"Die GrünGarten GmbH emittiert Aktien und nimmt damit zusätzliche liquide Mittel ein.", correct:false,
+      explain:"Falsch. Eine Aktienemission ist nur einer Aktiengesellschaft möglich. Die GrünGarten GmbH ist eine GmbH und kann keine Aktien ausgeben." }
+  ]
+},
+
+
+/* ============================================================
+   RECHNUNGSWESEN & BILANZ
+   ============================================================ */
+{ id:"r1", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Bilanzanalyse einer Industrie-GmbH",
+  scenario:"Nachstehend sehen Sie die Bilanz der Werrata GmbH, eines Industriebetriebs mit Sitz in Linz, per 31.12.20xx (alle Beträge in Euro). Das Anlagevermögen umfasst die Grundstücke, Bauten und technischen Anlagen sowie die langfristigen Finanzanlagen; das Umlaufvermögen umfasst die übrigen Aktiva.",
+  bilanz: {
+    aktiva: [
+      { name:"Anlagevermögen", value:"", head:true },
+      { name:"Grundstücke, Bauten und technische Anlagen", value:"3 120 000" },
+      { name:"Finanzanlagen (langfristig)", value:"360 000" },
+      { name:"Umlaufvermögen", value:"", head:true },
+      { name:"Vorräte", value:"6 900 000" },
+      { name:"Forderungen aus Lieferungen und Leistungen", value:"1 050 000" },
+      { name:"Bankguthaben und Barbestand", value:"470 000" }
+    ],
+    passiva: [
+      { name:"Eigenkapital", value:"", head:true },
+      { name:"Bareinlagen der Gesellschafter", value:"900 000" },
+      { name:"Gewinn", value:"2 300 000" },
+      { name:"Fremdkapital", value:"", head:true },
+      { name:"Rückstellungen", value:"1 600 000" },
+      { name:"Bankkredit (Laufzeit 12 Jahre)", value:"6 400 000" },
+      { name:"Verbindlichkeiten aus Lieferungen und Leistungen", value:"700 000" }
+    ],
+    summe: "11 900 000"
+  },
+  stem:"Welche der folgenden Aussagen zu dieser Bilanz ist/sind korrekt?",
+  statements:[
+    { text:"Die Werrata GmbH bezahlt alle ihre Rechnungen sofort und hat keine offenen Verbindlichkeiten.", correct:false,
+      explain:"Falsch. Die Bilanz weist 700.000 Euro Verbindlichkeiten aus Lieferungen und Leistungen aus – das Unternehmen hat also sehr wohl offene Rechnungen." },
+    { text:"Im Sinne der goldenen Bilanzregel ist das Anlagevermögen vollständig durch langfristiges Kapital (Eigenkapital und langfristiger Bankkredit) gedeckt.", correct:true,
+      explain:"Richtig. Das Anlagevermögen beträgt 3.480.000 Euro; allein das Eigenkapital (3.200.000) plus der 12-jährige Bankkredit (6.400.000) deckt es mehr als ausreichend langfristig ab." },
+    { text:"Wenn die Werrata GmbH Aktien kauft und damit ihre Finanzanlagen erhöht, steigt dadurch auch ihr Eigenkapital.", correct:false,
+      explain:"Falsch. Der Kauf von Aktien ist ein reiner Aktivtausch: Die Finanzanlagen steigen, das Bankguthaben sinkt um denselben Betrag. Das Eigenkapital bleibt unverändert." },
+    { text:"Unter den Aktiva der Werrata GmbH lässt sich keine Position rascher zu Zahlungsmitteln machen als der Posten 'Bankguthaben und Barbestand'.", correct:true,
+      explain:"Richtig. Bankguthaben und Barbestand sind bereits Zahlungsmittel und damit die liquideste Position der Aktiva." },
+    { text:"Auf den Posten 'Vorräte' entfällt mehr als die Hälfte der gesamten Bilanzsumme.", correct:true,
+      explain:"Richtig. Die Vorräte betragen 6.900.000 Euro; das ist mehr als die Hälfte der Bilanzsumme von 11.900.000 Euro (Hälfte = 5.950.000)." }
+  ]
+},
+
+{ id:"r2", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Aufbau und Logik der Bilanz",
+  stem:"Welche der folgenden Aussagen zum Aufbau einer Bilanz ist/sind korrekt?",
+  statements:[
+    { text:"Die Summe der Aktiva entspricht stets der Summe der Passiva.", correct:true,
+      explain:"Richtig. Jeder Vermögensteil muss finanziert worden sein – daher gilt immer: Summe der Aktiva = Summe der Passiva (Bilanzsumme)." },
+    { text:"Die Aktivseite (Sollseite) zeigt, woher die Mittel des Unternehmens stammen.", correct:false,
+      explain:"Falsch. Die Aktivseite zeigt die Mittelverwendung (wofür Mittel eingesetzt wurden, das Vermögen). Die Mittelherkunft steht auf der Passivseite (Habenseite)." },
+    { text:"Das Eigenkapital ergibt sich als Differenz aus dem Vermögen und dem Fremdkapital.", correct:true,
+      explain:"Richtig. Eigenkapital = Vermögen − Fremdkapital; es ist jener Teil des Vermögens, der nicht mit Schulden finanziert wurde." },
+    { text:"Ein Vermögensgegenstand, der voraussichtlich länger als ein Jahr im Unternehmen bleibt, zählt zum Umlaufvermögen.", correct:false,
+      explain:"Falsch. Vermögen, das länger als ein Jahr im Unternehmen bleibt, ist Anlagevermögen. Umlaufvermögen bleibt typischerweise kürzer als ein Jahr (z. B. Vorräte)." },
+    { text:"Steigt das Eigenkapital eines Unternehmens im Vergleich zweier Bilanzstichtage, deutet das auf einen Gewinn hin.", correct:true,
+      explain:"Richtig. Ein Steigen des Eigenkapitals bedeutet einen Gewinn, ein Sinken einen Verlust (doppelte Gewinnermittlung)." }
+  ]
+},
+
+{ id:"r3", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Kostenrechnung, Deckungsbeitrag und Break-Even",
+  scenario:"Ein Hersteller verkauft ein Fahrrad um 400 Euro; die variablen Kosten je Stück betragen 180 Euro. Die gesamten Fixkosten belaufen sich auf 4 Mio. Euro, die durchschnittliche Deckungsquote über alle Modelle liegt bei 55 %.",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Der Deckungsbeitrag pro Fahrrad beträgt 220 Euro.", correct:true,
+      explain:"Richtig. Deckungsbeitrag = Verkaufspreis − variable Kosten = 400 − 180 = 220 Euro." },
+    { text:"Der Break-Even-Umsatz liegt bei rund 7,3 Mio. Euro.", correct:true,
+      explain:"Richtig. Break-Even-Umsatz = Fixkosten ÷ Deckungsquote = 4 Mio. ÷ 0,55 ≈ 7,27 Mio. Euro." },
+    { text:"Kurzfristig ist ein Verkauf unter den Vollkosten betriebswirtschaftlich nie sinnvoll.", correct:false,
+      explain:"Falsch. Solange der Preis die variablen Kosten übersteigt, wird ein Deckungsbeitrag erzielt. Kurzfristig kann ein Verkauf über variablen, aber unter Vollkosten sinnvoller sein als gar nicht zu verkaufen." },
+    { text:"Die Miete für die Produktionshalle zählt zu den variablen Kosten.", correct:false,
+      explain:"Falsch. Die Hallenmiete fällt unabhängig von der produzierten Stückzahl an und ist daher eine Fixkost. Variabel sind z. B. die Materialkosten je Stück." },
+    { text:"Die Kostenrechnung ist gesetzlich nicht verpflichtend und wird als internes Rechnungswesen bezeichnet.", correct:true,
+      explain:"Richtig. Die Kostenrechnung dient internen Steuerungs- und Kontrollzwecken und ist nicht gesetzlich vorgeschrieben." }
+  ]
+},
+
+{ id:"r4", topic:"rechnungswesen", difficulty:"mittel",
+  title:"Gewinn, Cashflow und Buchhaltungspflicht",
+  stem:"Welche der folgenden Aussagen zu Gewinnermittlung, Cashflow und Buchführung ist/sind korrekt?",
+  statements:[
+    { text:"In der Gewinn- und Verlustrechnung wird der Gewinn ermittelt, indem von den Erträgen die Aufwände abgezogen werden.", correct:true,
+      explain:"Richtig. Übersteigt die Summe aus Erlösen und Erträgen die Aufwände, entsteht ein Gewinn." },
+    { text:"Gewinn und Cashflow sind stets identisch.", correct:false,
+      explain:"Falsch. Man kann einen Gewinn erzielen, ohne liquide zu sein, und liquide sein, ohne einen Gewinn zu erzielen. Gewinn und Cashflow sind unterschiedliche Kennzahlen." },
+    { text:"Kapitalgesellschaften müssen unabhängig vom Umsatz eine doppelte Buchhaltung führen.", correct:true,
+      explain:"Richtig. Kapitalgesellschaften sind immer zur doppelten Buchhaltung (Bilanz und G&V) verpflichtet." },
+    { text:"Ein Einzelunternehmen mit 400.000 Euro Jahresumsatz darf eine Einnahmen-Ausgaben-Rechnung führen.", correct:true,
+      explain:"Richtig. Einzelunternehmen und Personengesellschaften dürfen bei einem Umsatz unter 700.000 Euro die einfachere Einnahmen-Ausgaben-Rechnung nutzen." },
+    { text:"Die Cashflowrechnung wird in die Bereiche Aktiva, Passiva und Eigenkapital gegliedert.", correct:false,
+      explain:"Falsch. Die Cashflowrechnung gliedert sich in Betriebstätigkeit, Investitionstätigkeit und Finanzierungstätigkeit – Aktiva/Passiva/Eigenkapital sind Bestandteile der Bilanz." }
+  ]
+},
+
+
+/* ============================================================
+   MARKETING
+   ============================================================ */
+{ id:"m1", topic:"marketing", difficulty:"mittel",
+  title:"Grundverständnis Marketing und Marketing-Mix",
+  stem:"Welche der folgenden Aussagen zum Marketing ist/sind korrekt?",
+  statements:[
+    { text:"Marketing umfasst ausschließlich Werbung und Verkaufsförderung.", correct:false,
+      explain:"Falsch. Marketing ist die systematische Ausrichtung des gesamten Unternehmens an den Kundenbedürfnissen. Werbung ist nur ein kleiner Teilbereich davon." },
+    { text:"Die vier klassischen Bereiche des Marketing-Mix sind Product, Price, Place und Promotion.", correct:true,
+      explain:"Richtig. Das sind die '4 Ps': Produkt-, Preis-, Distributions- und Kommunikationspolitik." },
+    { text:"Im Marketing gelten nur physisch greifbare Güter als 'Produkt'.", correct:false,
+      explain:"Falsch. Auch Dienstleistungen, Organisationen, Ideen, Personen oder Orte können vermarktet werden und gelten im Marketing als 'Produkt'." },
+    { text:"Die Distributionspolitik (Place) betrifft die Frage, über welche Absatzwege das Produkt zu den Kund:innen gelangt.", correct:true,
+      explain:"Richtig. Die Distributionspolitik regelt den Absatzweg (z. B. Groß-/Einzelhandel, eigene Filialen, Internet, Franchising) und den Transportweg." },
+    { text:"Die USP (Unique Selling Proposition) ist ein Alleinstellungsmerkmal, das ein Produkt unverwechselbar von der Konkurrenz abhebt.", correct:true,
+      explain:"Richtig. Die USP macht ein Produkt für die Zielgruppe besonders wünschenswert und unterscheidbar von Mitbewerbern." }
+  ]
+},
+
+{ id:"m2", topic:"marketing", difficulty:"schwer",
+  title:"Marktkennzahlen und Marktanteil",
+  scenario:"Unternehmen A erzielt mit einem Produkt einen Umsatz von 4 Mio. Euro. Das gesamte Marktvolumen für dieses Produkt beträgt 20 Mio. Euro; der größte Mitbewerber erzielt 8 Mio. Euro Umsatz.",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Der absolute Marktanteil von Unternehmen A beträgt 20 %.", correct:true,
+      explain:"Richtig. Absoluter Marktanteil = (Unternehmensumsatz ÷ Marktvolumen) × 100 = (4 ÷ 20) × 100 = 20 %." },
+    { text:"Der relative Marktanteil von Unternehmen A beträgt 0,5.", correct:true,
+      explain:"Richtig. Relativer Marktanteil = Unternehmensumsatz ÷ Umsatz des größten Mitbewerbers = 4 ÷ 8 = 0,5." },
+    { text:"Aufgrund seines relativen Marktanteils ist Unternehmen A der Marktführer.", correct:false,
+      explain:"Falsch. Ein relativer Marktanteil unter 1 zeigt, dass A NICHT Marktführer ist – Marktführerschaft läge erst bei einem Wert über 1 vor." },
+    { text:"Das Marktpotenzial ist die tatsächlich verkaufte Menge eines Produkts.", correct:false,
+      explain:"Falsch. Das Marktpotenzial ist die maximal mögliche Absatzmenge. Die tatsächlich verkaufte Menge ist das Marktvolumen." },
+    { text:"Liegt das Marktvolumen nahe am Marktpotenzial, ist der Markt nahezu gesättigt.", correct:true,
+      explain:"Richtig. Ist das Marktvolumen nahe am Marktpotenzial, kann kaum mehr verkauft werden – der Markt ist beinahe gesättigt." }
+  ]
+},
+
+{ id:"m3", topic:"marketing", difficulty:"schwer",
+  title:"Produktlebenszyklus und Produktpolitik",
+  stem:"Welche der folgenden Aussagen zum Produktlebenszyklus und zur Produktpolitik ist/sind korrekt?",
+  statements:[
+    { text:"In der Reifephase erreicht der Umsatz typischerweise sein Maximum, während die Gewinne wegen zunehmender Konkurrenz bereits wieder sinken.", correct:true,
+      explain:"Richtig. In der Reifephase ist der Umsatz am höchsten, die Gewinne sinken jedoch durch höheren Werbe- und Rabattaufwand." },
+    { text:"In der Einführungsphase wird in der Regel sofort ein hoher Gewinn erzielt.", correct:false,
+      explain:"Falsch. In der Einführungsphase sind die Entwicklungs- und Werbekosten hoch; Gewinn wird meist erst gegen Ende dieser Phase erzielt – wenn überhaupt." },
+    { text:"Erweitert ein Fahrradhersteller sein Sortiment um Sportbekleidung und Fitnessgeräte, handelt es sich um Produktdiversifikation.", correct:true,
+      explain:"Richtig. Wird das Sortiment um neue, andersartige Kategorien verbreitert, spricht man von Produktdiversifikation; eine Vertiefung des bestehenden Sortiments wäre Produktdifferenzierung." },
+    { text:"Bei der Produktvariation wird neben der neuen auch die vorherige Version des Produkts weiterhin angeboten.", correct:false,
+      explain:"Falsch. Bei der Produktvariation wird nur noch die veränderte Version angeboten; die Vorgängerversion wird nicht weitergeführt." },
+    { text:"Beim Geltungsnutzen geht es um das Prestige, sich ein bestimmtes Produkt leisten zu können.", correct:true,
+      explain:"Richtig. Der Geltungsnutzen ist ein Zusatznutzen und betrifft das Prestige bzw. den Status, den ein Produkt vermittelt." }
+  ]
+},
+
+{ id:"m4", topic:"marketing", difficulty:"mittel",
+  title:"Preis, Distribution und Käuferverhalten",
+  stem:"Welche der folgenden Aussagen zur Preis- und Distributionspolitik ist/sind korrekt?",
+  statements:[
+    { text:"Ein Verkäufermarkt liegt vor, wenn die Nachfrage das Angebot übersteigt und Verkäufer:innen mehr Verhandlungsmacht haben.", correct:true,
+      explain:"Richtig. Im Verkäufermarkt übersteigt die Nachfrage das Angebot, Preise tendieren nach oben, Verkäufer:innen sind im Vorteil." },
+    { text:"Beim Snob-Effekt wird ein teures Produkt vor allem gekauft, weil andere es ebenfalls kaufen.", correct:false,
+      explain:"Falsch. Das beschreibt den Mitläufer-Effekt. Beim Snob-Effekt kauft man teuer, um zu zeigen, dass man es sich leisten kann." },
+    { text:"Beim direkten Absatzweg verkauft das produzierende Unternehmen ohne zwischengeschaltete Handelsbetriebe an den Endabnehmer.", correct:true,
+      explain:"Richtig. Beim direkten Absatz gibt es keine Zwischenhändler; beim indirekten Absatz sind Groß- oder Einzelhändler dazwischengeschaltet." },
+    { text:"Beim Franchising ist der Franchisenehmer ein unselbstständiger Angestellter des Franchisegebers.", correct:false,
+      explain:"Falsch. Der Franchisenehmer ist rechtlich und wirtschaftlich selbstständig, aber an das Marketingkonzept des Franchisegebers gebunden." },
+    { text:"Der Qualitätseffekt beschreibt die Vermutung, dass teurere Produkte besser sind als günstigere.", correct:true,
+      explain:"Richtig. Beim Qualitätseffekt schließen Käufer:innen vom höheren Preis auf eine höhere Qualität." }
+  ]
+},
+
+
+/* ============================================================
+   DIGITALISIERUNG
+   ============================================================ */
+{ id:"d1", topic:"digitalisierung", difficulty:"schwer",
+  title:"Internet und World Wide Web",
+  stem:"Welche der folgenden Aussagen zum Internet und zum WWW ist/sind korrekt?",
+  statements:[
+    { text:"Mit seinem Aufsatz 'Information Management: A Proposal' legte Tim Berners-Lee am CERN den Grundstein für das Internet.", correct:false,
+      explain:"Falsch. Tim Berners-Lee legte damit den Grundstein für das World Wide Web – einen Dienst, der auf dem Internet aufbaut –, nicht für das Internet selbst." },
+    { text:"Die Abkürzung IP steht für 'Identification Protocol'; über die IP-Adresse wird eindeutig die natürliche Person eines Nutzers bestimmt.", correct:false,
+      explain:"Falsch. IP steht für 'Internet Protocol'. Eine IP-Adresse adressiert ein Gerät im Netzwerk, sie identifiziert keine natürliche Person eindeutig." },
+    { text:"Das World Wide Web ist ein Dienst, der die Infrastruktur des Internets nutzt, um Informationen bereitzustellen und auffindbar zu machen.", correct:true,
+      explain:"Richtig. Das WWW ist eine Anwendung bzw. ein Dienst, der auf der Infrastruktur des Internets aufbaut." },
+    { text:"Für das Internet und das WWW genügt ein einziges gemeinsames Protokoll; HTTP, HTML und URL sind dafür nicht erforderlich.", correct:false,
+      explain:"Falsch. HTTP (Übertragung), HTML (Strukturierung) und URL (Adressierung) sind grundlegende, für ein funktionierendes WWW notwendige Konzepte." },
+    { text:"Das Internet ist ein weltweites Netzwerk von Netzwerken, über das sich Daten versenden und empfangen lassen.", correct:true,
+      explain:"Richtig. Das Internet ist ein 'Netzwerk von Netzwerken', über das Daten ausgetauscht werden." }
+  ]
+},
+
+{ id:"d2", topic:"digitalisierung", difficulty:"schwer",
+  title:"Client-Server-Architektur und Protokolle",
+  stem:"Welche der folgenden Aussagen zur Technik des WWW ist/sind korrekt?",
+  statements:[
+    { text:"Ein Kommunikationsprotokoll hält Regeln fest, wie Rechner präzise und möglichst unmissverständlich miteinander kommunizieren sollen.", correct:true,
+      explain:"Richtig. Ein Kommunikationsprotokoll legt z. B. fest, wie Meldungen formuliert und Antworten gestaltet werden – vergleichbar mit den Konventionen beim Versenden eines Briefes." },
+    { text:"Beim Request-Response-Prinzip sendet der Server unaufgefordert Anfragen an den Browser.", correct:false,
+      explain:"Falsch. Beim Request-Response-Prinzip stellt der Client (z. B. der Browser) eine Anfrage (request), und der Server liefert eine Antwort (response) – nicht umgekehrt." },
+    { text:"In der Client-Server-Architektur kann ein Client wie ein Web-Browser von einem Server Inhalte anfordern.", correct:true,
+      explain:"Richtig. Der Client fordert über das Netzwerk Inhalte oder Dienste an, die der Server bereitstellt." },
+    { text:"HTML ist ein Protokoll, das festlegt, wie ein Browser Informationen von einem Server anfordert.", correct:false,
+      explain:"Falsch. Das beschreibt HTTP. HTML ist eine Sprache zur Strukturierung von Informationen, damit ein Browser sie korrekt darstellen kann." },
+    { text:"Ein Server ist im Kern ein Rechner, der über das Netzwerk auf Anfragen wartet und diese beantwortet.", correct:true,
+      explain:"Richtig. Ein Server ist ein Rechner, auf dem Server-Software läuft, die Anfragen aus dem Internet bearbeitet." }
+  ]
+},
+
+{ id:"d3", topic:"digitalisierung", difficulty:"mittel",
+  title:"Digitale Geschäftsmodelle und digitale Transformation",
+  stem:"Welche der folgenden Aussagen zu digitalen Geschäftsmodellen ist/sind korrekt?",
+  statements:[
+    { text:"Ein Geschäftsmodell beschreibt, wie ein Unternehmen ein Produkt oder eine Dienstleistung erzeugt, bereitstellt und vertreibt, um einen Gewinn zu erwirtschaften.", correct:true,
+      explain:"Richtig. Das Geschäftsmodell beschreibt die Wertschöpfung von der Idee bis zum Vertrieb mit dem Ziel, einen Gewinn zu erzielen." },
+    { text:"Bei einem Online-Marktplatz (z. B. willhaben.at) können auch Privatpersonen als Verkäufer:innen auftreten, während ein Webshop typischerweise von einem einzelnen Anbieter betrieben wird.", correct:true,
+      explain:"Richtig. Der Marktplatz öffnet die Plattform für viele Anbieter inklusive Privatpersonen; der Webshop wird von einem einzelnen Verkäufer betrieben." },
+    { text:"Ein Geschäftsprozess ist eine einmalige, nicht wiederholbare Handlung ohne definierten Anfang oder definiertes Ende.", correct:false,
+      explain:"Falsch. Ein Geschäftsprozess ist ein wiederholbarer Arbeitsablauf aus mehreren logisch zusammenhängenden Aktivitäten mit klar definiertem Anfang und Ende." },
+    { text:"Der Wechsel eines Anbieters vom Verkauf einzelner Musikstücke (Download) hin zu einem Streaming-Abo ist ein Beispiel für eine Veränderung des Geschäftsmodells.", correct:true,
+      explain:"Richtig. Streaming gegen Abo-Gebühr statt Einzelverkauf ist ein grundlegend anderes, durch IT ermöglichtes Geschäftsmodell." },
+    { text:"Die 'Backstage'-Dimension der Digitalisierung bezieht sich ausschließlich auf die Außenwerbung eines Unternehmens.", correct:false,
+      explain:"Falsch. Die 'Backstage'-Dimension betrifft den internen Fokus – digital unterstützte Geschäftsprozesse hinter den Kulissen, die die Wertschöpfung steuern." }
+  ]
+}
+
+,
+
+/* ===== GRUNDLAGEN (Erweiterung) ===== */
+{ id:"g6", topic:"grundlagen", difficulty:"mittel",
+  title:"Arbeitsteilung und Spezialisierung",
+  stem:"Welche der folgenden Aussagen zu Arbeitsteilung und Spezialisierung ist/sind korrekt?",
+  statements:[
+    { text:"Spezialisierung erlaubt es Unternehmen, sich auf weniger Arbeitsschritte zu konzentrieren und dort ihre Kompetenz auszubauen.", correct:true,
+      explain:"Richtig. Die Konzentration auf weniger Schritte bringt Produktionsvorteile und ermöglicht oft größere Stückzahlen." },
+    { text:"Eine größere Produktionsmenge führt in der Regel zu höheren Stückkosten, weil die Fixkosten auf mehr Stück verteilt werden.", correct:false,
+      explain:"Falsch. Die Verteilung der Fixkosten auf mehr Stück senkt die Stückkosten – eine größere Menge bedeutet daher meist niedrigere Kosten pro Stück." },
+    { text:"Spezialisierung erhöht die Abhängigkeit von Zulieferern hinsichtlich Qualität und Liefermenge.", correct:true,
+      explain:"Richtig. Wer nicht alle Teile selbst erzeugt, ist auf rechtzeitige Lieferungen in passender Qualität angewiesen; Verzögerungen beeinträchtigen die Produktion." },
+    { text:"Lange internationale Lieferketten sind in der Regel ökologisch unproblematisch.", correct:false,
+      explain:"Falsch. Lange Transportwege über LKW, Containerschiffe oder Flugzeuge bedeuten meist eine hohe Umweltbelastung." },
+    { text:"Arbeitsteilung findet ausschließlich innerhalb einzelner Unternehmen statt.", correct:false,
+      explain:"Falsch. Arbeitsteilung findet auf mehreren Ebenen statt: innerhalb von Unternehmen, zwischen Unternehmen und sogar zwischen ganzen Ländern." }
+  ]
+},
+
+{ id:"g7", topic:"grundlagen", difficulty:"mittel",
+  title:"Der Wirtschaftskreislauf",
+  stem:"Welche der folgenden Aussagen zum Wirtschaftskreislauf ist/sind korrekt?",
+  statements:[
+    { text:"Am (erweiterten) Wirtschaftskreislauf sind private Haushalte, Unternehmen und der Staat beteiligt.", correct:true,
+      explain:"Richtig. Diese drei sind die wesentlichen Wirtschaftsteilnehmer; im erweiterten Modell kommt das Ausland hinzu." },
+    { text:"Private Haushalte bieten Arbeitsleistung an und erhalten dafür Lohn und Gehalt.", correct:true,
+      explain:"Richtig. Mit diesem Einkommen kaufen sie wiederum Produkte und Dienstleistungen – so schließt sich der Kreislauf." },
+    { text:"Der Staat hebt zwar Steuern ein, erbringt aber im Gegenzug keinerlei Leistungen.", correct:false,
+      explain:"Falsch. Der Staat erbringt öffentliche Güter und Leistungen (Infrastruktur, Bildung, Sicherheit) und leistet Transferzahlungen." },
+    { text:"Innerhalb des Wirtschaftskreislaufs unterscheidet man einen Güterkreislauf und einen Geldkreislauf.", correct:true,
+      explain:"Richtig. Güter und Leistungen fließen in die eine, Geld in die andere Richtung." },
+    { text:"Banken spielen im Geldkreislauf keine Rolle.", correct:false,
+      explain:"Falsch. Banken sind zentral: Sie wickeln den Zahlungsverkehr ab, nehmen Spareinlagen entgegen und vergeben Kredite." }
+  ]
+},
+
+{ id:"g8", topic:"grundlagen", difficulty:"schwer",
+  title:"Außenhandel Österreichs",
+  stem:"Welche der folgenden Aussagen zum österreichischen Außenhandel ist/sind korrekt?",
+  statements:[
+    { text:"Rund 70 % der österreichischen Exporte und Importe erfolgen mit EU-Mitgliedsstaaten.", correct:true,
+      explain:"Richtig. Die EU-Mitgliedschaft hat den Handel mit anderen Mitgliedsstaaten erleichtert; der Handel mit Drittstaaten (USA, GB, China) bleibt dennoch wichtig." },
+    { text:"Die wichtigsten österreichischen Exportgüter sind Mozartkugeln, Haselnusswaffeln und Sachertorten.", correct:false,
+      explain:"Falsch. Die Exportliste führen Maschinen, Fahrzeuge, bearbeitete Waren und chemische Erzeugnisse an – nicht die populären Süßwaren." },
+    { text:"Der EU-Binnenmarkt umfasst die vier Grundfreiheiten: freier Waren-, Personen-, Dienstleistungs- und Kapitalverkehr.", correct:true,
+      explain:"Richtig. Diese vier Grundfreiheiten sind das Kernstück des EU-Binnenmarkts." },
+    { text:"Als großes Binnenland ist Österreich kaum auf den Außenhandel angewiesen.", correct:false,
+      explain:"Falsch. Österreich ist ein kleines, stark exportorientiertes Binnenland; die Exportquote liegt bei rund 50 % der Wirtschaftsleistung." },
+    { text:"Die Exportquote misst die Waren- und Dienstleistungsexporte in Prozent des Bruttoinlandsprodukts.", correct:true,
+      explain:"Richtig. 2023 lag sie bei etwa 50 % – fünf von zehn in Österreich erwirtschafteten Euro stammen aus dem Außenhandel." }
+  ]
+},
+
+{ id:"g9", topic:"grundlagen", difficulty:"schwer",
+  title:"Marktgleichgewicht und Ungleichgewicht",
+  stem:"Welche der folgenden Aussagen zur Preisbildung am Markt ist/sind korrekt?",
+  statements:[
+    { text:"Beim Markträumungspreis gibt es in der Regel keine Preistendenz nach oben oder unten.", correct:true,
+      explain:"Richtig. Im Gleichgewicht entspricht die angebotene der nachgefragten Menge, der Markt wird vollständig geräumt." },
+    { text:"Ein Preis unterhalb des Gleichgewichts führt zu einer Fehlmenge, weil die Nachfrage steigt und das Angebot sinkt.", correct:true,
+      explain:"Richtig. Ein zu niedriger Preis erzeugt einen Nachfrageüberhang (Fehlmenge)." },
+    { text:"Höhere Preise stimulieren die Nachfrage und dämpfen das Angebot.", correct:false,
+      explain:"Falsch. Umgekehrt: Höhere Preise dämpfen die Nachfrage und stimulieren das Angebot, sodass die Preise tendenziell wieder sinken." },
+    { text:"Über die Koordinierungsfunktion des Preises kehren Märkte tendenziell zum Gleichgewicht zurück.", correct:true,
+      explain:"Richtig. Der Preis koordiniert die Entscheidungen von Anbietern und Nachfragern und treibt den Markt Richtung Gleichgewicht." },
+    { text:"Der Preis ist auch ein Indikator für die Knappheit eines Gutes.", correct:true,
+      explain:"Richtig. Ein hoher Preis signalisiert in der Regel ein knappes Gut bei hoher Nachfrage." }
+  ]
+},
+
+{ id:"g10", topic:"grundlagen", difficulty:"schwer",
+  title:"Verschiebung von Angebot und Nachfrage",
+  stem:"Welche der folgenden Aussagen zu den Einflussfaktoren auf Angebot und Nachfrage ist/sind korrekt?",
+  statements:[
+    { text:"Sinkt das Einkommen der Nachfrager, verschiebt sich die Nachfragekurve nach links.", correct:true,
+      explain:"Richtig. Bei niedrigerem Einkommen können sich weniger Personen das Gut leisten, die Nachfrage sinkt bei jedem Preisniveau." },
+    { text:"Treten mehr Anbieter in einen Markt ein, verschiebt sich die Angebotskurve nach rechts.", correct:true,
+      explain:"Richtig. Mehr Anbieter erhöhen die angebotene Menge bei jedem Preisniveau." },
+    { text:"Erwarten Anbieter fallende Preise, erhöhen sie typischerweise ihr Angebot.", correct:false,
+      explain:"Falsch. Bei der Erwartung fallender Preise reduzieren Anbieter eher ihr Angebot bzw. ziehen sich zurück." },
+    { text:"Ein Trend zugunsten eines Produkts (steigende Präferenz) erhöht dessen Nachfrage.", correct:true,
+      explain:"Richtig. Steigende Präferenzen verschieben die Nachfragekurve nach rechts." },
+    { text:"Technische Weiterentwicklungen und fallende Ressourcenkosten verringern in der Regel das Angebot.", correct:false,
+      explain:"Falsch. Sie können mehr Anbieter veranlassen, in den Markt einzutreten, und erhöhen damit eher das Angebot." }
+  ]
+},
+
+{ id:"g11", topic:"grundlagen", difficulty:"schwer",
+  title:"Grenzkosten und Angebotsentscheidung",
+  stem:"Welche der folgenden Aussagen zu Grenzkosten und Angebot ist/sind korrekt?",
+  statements:[
+    { text:"Grenzkosten sind die Kosten für die Herstellung einer zusätzlichen Einheit eines Gutes.", correct:true,
+      explain:"Richtig. Sie betreffen die jeweils nächste produzierte Einheit." },
+    { text:"Für viele Unternehmen steigen die Grenzkosten mit zunehmender Produktionsmenge.", correct:true,
+      explain:"Richtig. Produktionssteigerungen erfordern oft zusätzliche Anlagen und Personal, wodurch die Grenzkosten steigen." },
+    { text:"Ein Unternehmen weitet die Produktion sinnvollerweise aus, solange der erzielbare Preis unter den Grenzkosten liegt.", correct:false,
+      explain:"Falsch. Eine Ausweitung lohnt sich nur, wenn der erzielbare Preis höher oder zumindest gleich den Grenzkosten ist." },
+    { text:"Verkauft ein Anbieter nicht, obwohl er einen guten Preis erzielen könnte, entstehen ihm Opportunitätskosten.", correct:true,
+      explain:"Richtig. Der nicht erzielte Preis ist sein entgangener Ertrag – also seine Opportunitätskosten." },
+    { text:"Die angebotene Menge ist unabhängig vom erzielbaren Verkaufspreis.", correct:false,
+      explain:"Falsch. Unter ceteris-paribus-Bedingungen gilt: Je höher der erzielbare Preis, desto höher die angebotene Menge." }
+  ]
+},
+
+{ id:"g12", topic:"grundlagen", difficulty:"mittel",
+  title:"Funktionen und Formen von Geld",
+  stem:"Welche der folgenden Aussagen zu den Funktionen und Formen von Geld ist/sind korrekt?",
+  statements:[
+    { text:"Geld dient als Tauschmittel, als Wertmesser und als Wertaufbewahrungsmittel.", correct:true,
+      explain:"Richtig. Das sind die drei zentralen Funktionen des Geldes." },
+    { text:"Die Akzeptanz von Geld beruht wesentlich auf dem Vertrauen, es wieder gegen Güter eintauschen zu können.", correct:true,
+      explain:"Richtig. Ohne dieses Vertrauen in den Tauschwert würden die Geldfunktionen nicht greifen." },
+    { text:"Bargeld wird in der Regel verzinst, Buchgeld dagegen nicht.", correct:false,
+      explain:"Falsch. Umgekehrt: Guthaben (Buchgeld) wird in der Regel – wenn auch oft gering – verzinst, Bargeld verzinst sich nicht." },
+    { text:"Der bei weitem größere Teil des im Umlauf befindlichen Geldes liegt als Buchgeld vor.", correct:true,
+      explain:"Richtig. Obwohl Buchgeld nicht physisch greifbar ist, macht es den größten Teil der Geldmenge aus." },
+    { text:"Buchgeld ist weniger wert als die gleiche Summe in Bargeld.", correct:false,
+      explain:"Falsch. Buchgeld ist genauso viel wert wie Bargeld – solange das Vertrauen besteht, es eintauschen zu können." }
+  ]
+},
+
+{ id:"g13", topic:"grundlagen", difficulty:"schwer",
+  title:"Währung und Wechselkurs",
+  stem:"Welche der folgenden Aussagen zu Währung und Wechselkurs ist/sind korrekt?",
+  statements:[
+    { text:"Der Wechselkurs ist der Preis einer Währung, ausgedrückt in einer anderen Währung.", correct:true,
+      explain:"Richtig. Beispiel: 1 Euro = 1,2 US-Dollar bedeutet, dass 1 Euro 1,2 US-Dollar kostet." },
+    { text:"Steigt der Wert des Euro gegenüber dem Dollar, bekommt man für einen Euro weniger Dollar.", correct:false,
+      explain:"Falsch. Steigt der Euro gegenüber dem Dollar, bekommt man für einen Euro MEHR Dollar und kann sich im Dollarraum mehr leisten." },
+    { text:"Für den Tausch von Bargeld werden Valutenkurse angewandt, ansonsten Devisenkurse.", correct:true,
+      explain:"Richtig. Bargeld wird zu Valutenkursen, unbarer Zahlungsverkehr zu Devisenkursen umgerechnet." },
+    { text:"Der Ankaufskurs ist jener Kurs, zu dem die Bank Fremdwährung verkauft.", correct:false,
+      explain:"Falsch. Der Ankaufskurs ist der Kurs, zu dem die Bank Fremdwährung ANKAUFT; der Verkaufskurs ist jener, zu dem sie verkauft." },
+    { text:"Der Außenwert einer Währung wird gegenüber einem gewichteten Korb ausländischer Währungen ermittelt.", correct:true,
+      explain:"Richtig. Die bilateralen Wechselkurse werden – meist nach Handelsvolumen gewichtet – zu einem multilateralen Wechselkurs zusammengefasst." }
+  ]
+},
+
+{ id:"g14", topic:"grundlagen", difficulty:"schwer",
+  title:"Zinsen",
+  stem:"Welche der folgenden Aussagen zu Zinsen ist/sind korrekt?",
+  statements:[
+    { text:"Zinsen sind der Preis für das Ausborgen von Geld.", correct:true,
+      explain:"Richtig. Wer Geld verleiht, erhält Zinsen; wer Geld ausborgt, zahlt Zinsen." },
+    { text:"Der Gläubiger ist jene Person, die Geld ausborgt und Zinsen zahlt.", correct:false,
+      explain:"Falsch. Der Gläubiger verleiht Geld und erhält Zinsen. Wer Geld ausborgt und Zinsen zahlt, ist der Schuldner." },
+    { text:"Das Dubiosenrisiko bezeichnet das Risiko, dass der Schuldner das Geld nicht zurückzahlen kann.", correct:true,
+      explain:"Richtig. Für dieses Ausfallrisiko möchte der Gläubiger über die Zinsen entschädigt werden." },
+    { text:"Das Geldwertrisiko entschädigt den Gläubiger dafür, dass die Preise während der Laufzeit steigen könnten.", correct:true,
+      explain:"Richtig. Steigt das Preisniveau, kann sich der Gläubiger für den zurückgezahlten Betrag weniger leisten – dafür sollen die Zinsen entschädigen." },
+    { text:"Sinkt die Nachfrage nach Krediten zu stark, kann sie durch höhere Zinssätze wieder stimuliert werden.", correct:false,
+      explain:"Falsch. Eine zu niedrige Kreditnachfrage wird durch NIEDRIGERE Zinssätze stimuliert, nicht durch höhere." }
+  ]
+},
+
+{ id:"g15", topic:"grundlagen", difficulty:"schwer",
+  title:"Ursachen der Inflation",
+  stem:"Welche der folgenden Aussagen zu den Ursachen der Inflation ist/sind korrekt?",
+  statements:[
+    { text:"Eine rasche Zunahme der umlaufenden Geldmenge kann Inflation begünstigen.", correct:true,
+      explain:"Richtig. Ist im Verhältnis zu den Gütern zu viel Geld im Umlauf, das auch ausgegeben wird, steigt die Inflationsgefahr." },
+    { text:"Buchgeldschöpfung bezeichnet die Zunahme an Buchgeld durch die Kreditvergabe der Banken.", correct:true,
+      explain:"Richtig. Durch zusätzliche Kredite vermehrt sich das Buchgeld – das wird Buchgeldschöpfung genannt." },
+    { text:"Steigende Importpreise durch Wechselkursänderungen können zu importierter Inflation führen.", correct:true,
+      explain:"Richtig. Verteuern sich Importe (auch wechselkursbedingt), steigen die Produktionskosten und damit die Preise." },
+    { text:"Zur Inflationsbekämpfung senken Zentralbanken üblicherweise das Zinsniveau.", correct:false,
+      explain:"Falsch. Zur Inflationsbekämpfung wird das Zinsniveau in der Regel ERHÖHT, um die Kreditvergabe und damit die Geldmenge zu bremsen." },
+    { text:"Die Lohn-Preis-Spirale beschreibt, wie steigende Löhne und steigende Preise sich gegenseitig verstärken.", correct:true,
+      explain:"Richtig. Höhere Preise führen zu Lohnforderungen, höhere Löhne erhöhen die Kosten und damit wieder die Preise." }
+  ]
+},
+
+{ id:"g16", topic:"grundlagen", difficulty:"mittel",
+  title:"Messung der Inflation",
+  stem:"Welche der folgenden Aussagen zur Inflationsmessung ist/sind korrekt?",
+  statements:[
+    { text:"Die Inflationsrate wird auf Basis des Verbraucherpreisindex (VPI) berechnet.", correct:true,
+      explain:"Richtig. Monatlich werden die Preise bestimmter Waren und Dienstleistungen erhoben und verglichen." },
+    { text:"Der Warenkorb des VPI enthält rund 80 Produkte und Dienstleistungen.", correct:false,
+      explain:"Falsch. Der Warenkorb umfasst rund 800 verschiedene Produkte und Dienstleistungen eines durchschnittlichen Haushalts." },
+    { text:"Der Harmonisierte Verbraucherpreisindex (HVPI) dient dem vergleichbaren Inflationsvergleich in Europa.", correct:true,
+      explain:"Richtig. Der HVPI ist die Grundlage für die vergleichbare Inflationsmessung und die Bewertung der Geldwertstabilität in der Eurozone." },
+    { text:"Der VPI wird auch zur Wertsicherung von Geldbeträgen, etwa Mieten, verwendet.", correct:true,
+      explain:"Richtig. Steigt der Index, werden indexgebundene Zahlungen wie Mieten angepasst." },
+    { text:"Der Mikrowarenkorb (Index des täglichen Bedarfs) zeigt im Schnitt geringere Preisschwankungen als der VPI.", correct:false,
+      explain:"Falsch. Die Preise im Mikrowarenkorb schwankten im Schnitt stärker als jene, anhand derer der VPI berechnet wird." }
+  ]
+},
+
+{ id:"g17", topic:"grundlagen", difficulty:"mittel",
+  title:"Preisstabilität und Binnenwert",
+  stem:"Welche der folgenden Aussagen zu Preisstabilität und Geldwert ist/sind korrekt?",
+  statements:[
+    { text:"Die EZB sieht eine Inflationsrate von rund 2 % pro Jahr als bestmöglich für die Preisstabilität an.", correct:true,
+      explain:"Richtig. Bei deutlich höherer Inflation wird der Preisanstieg zu stark wahrgenommen." },
+    { text:"Durch Inflation sinkt der Binnenwert des Geldes.", correct:true,
+      explain:"Richtig. Steigende Preise verringern die Kaufkraft im Inland – der Binnenwert sinkt." },
+    { text:"Der Binnenwert einer Währung beschreibt das Verhältnis zu Fremdwährungen.", correct:false,
+      explain:"Falsch. Das ist der Außenwert. Der Binnenwert betrifft die Kaufkraft im Inland." },
+    { text:"Bei zu hoher Inflation wird der Preisanstieg von den Wirtschaftsteilnehmern deutlich wahrgenommen.", correct:true,
+      explain:"Richtig. Gerade deshalb gilt eine moderate Rate nahe 2 % als günstig für eine stabile Wirtschaftsentwicklung." },
+    { text:"Der Warenkorb wird jährlich an die Konsumgewohnheiten der Bevölkerung angepasst.", correct:false,
+      explain:"Falsch. Die Produkte und Dienstleistungen des Warenkorbs werden alle 5 Jahre angepasst." }
+  ]
+},
+
+{ id:"g18", topic:"grundlagen", difficulty:"schwer",
+  title:"BIP und BNP im Vergleich",
+  stem:"Welche der folgenden Aussagen zum BIP und BNP ist/sind korrekt?",
+  statements:[
+    { text:"Das BNP erfasst die weltweit von Inländern mit ihren Produktionsfaktoren erzielten Einkommen.", correct:true,
+      explain:"Richtig. Beim BNP ist nicht relevant, ob das Einkommen im In- oder Ausland anfällt, sondern wer es erwirtschaftet." },
+    { text:"Bei kleinen Volkswirtschaften können BIP und BNP stark voneinander abweichen.", correct:true,
+      explain:"Richtig. Bei großen Volkswirtschaften sind sie meist ähnlich, bei kleinen (z. B. Luxemburg) kann der Unterschied groß sein." },
+    { text:"Das BNP wurde früher als Bruttosozialprodukt (BSP) bezeichnet.", correct:true,
+      explain:"Richtig. Das BNP wird auch Bruttonationaleinkommen (BNE) genannt und hieß früher Bruttosozialprodukt (BSP)." },
+    { text:"Das BIP pro Kopf sagt zuverlässig etwas über die Nachhaltigkeit der Wirtschaftsleistung aus.", correct:false,
+      explain:"Falsch. Das BIP sagt nichts über die Qualität oder Nachhaltigkeit der Wirtschaftsleistung aus – das ist ein zentraler Kritikpunkt." },
+    { text:"Eine Naturkatastrophe, die Wiederaufbauarbeiten auslöst, senkt das BIP.", correct:false,
+      explain:"Falsch. Solche Sanierungs- und Wiederaufbauarbeiten würden das BIP sogar erhöhen – ein weiterer Kritikpunkt am BIP." }
+  ]
+},
+
+/* ===== NACHHALTIGKEIT (Erweiterung) ===== */
+{ id:"n4", topic:"nachhaltigkeit", difficulty:"mittel",
+  title:"Brundtland-Bericht und nachhaltige Entwicklung",
+  stem:"Welche der folgenden Aussagen zur nachhaltigen Entwicklung ist/sind korrekt?",
+  statements:[
+    { text:"Der Brundtland-Bericht 'Our Common Future' wurde 1987 veröffentlicht.", correct:true,
+      explain:"Richtig. Der Bericht der Weltkommission für Umwelt und Entwicklung (WCED) erschien 1987." },
+    { text:"Gro Harlem Brundtland war Vorsitzende der zuständigen Kommission.", correct:true,
+      explain:"Richtig. Nach ihr ist der Bericht auch benannt." },
+    { text:"Nachhaltige Entwicklung verzichtet laut Brundtland-Bericht vollständig auf Wirtschaftswachstum.", correct:false,
+      explain:"Falsch. Der Bericht fordert eine NEUE Art von Wachstum, die die Umwelt weit weniger belastet – nicht den vollständigen Verzicht auf Wachstum." },
+    { text:"Nachhaltigkeit verknüpft die drei Dimensionen Ökologie, Ökonomie und Soziales.", correct:true,
+      explain:"Richtig. Nachhaltiges Handeln strebt an, diese drei Dimensionen in Einklang zu bringen." },
+    { text:"Kurzfristige Umweltentscheidungen können laut Bericht zu künftigen wirtschaftlichen Problemen führen.", correct:true,
+      explain:"Richtig. Wirtschaftswachstum darf nicht durch seine Umweltauswirkungen zu künftigen wirtschaftlichen Problemen führen." }
+  ]
+},
+
+{ id:"n5", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Kapitalarten und Substituierbarkeit",
+  stem:"Welche der folgenden Aussagen zu schwacher und starker Nachhaltigkeit ist/sind korrekt?",
+  statements:[
+    { text:"Das Drei-Säulen-Modell betrachtet Ökologie, Soziales und Ökonomie als gleichwertige Säulen.", correct:true,
+      explain:"Richtig. Es bildet die Grundlage der schwachen Nachhaltigkeit." },
+    { text:"Schwache Nachhaltigkeit erlaubt, Naturkapital durch Human- oder Sachkapital zu ersetzen, solange die Gesamtsumme aller Kapitalarten konstant bleibt.", correct:true,
+      explain:"Richtig. Genau diese Substituierbarkeit kennzeichnet die schwache Nachhaltigkeit." },
+    { text:"Zum Naturkapital zählen z. B. Wälder, Bodenschätze und Biodiversität.", correct:true,
+      explain:"Richtig. Naturkapital umfasst die natürlichen Ressourcen und Ökosysteme." },
+    { text:"Humankapital bezeichnet die Produktionsanlagen in Fabriken.", correct:false,
+      explain:"Falsch. Produktionsanlagen sind Sachkapital. Humankapital meint die Bildung und Qualifikation der Arbeitskräfte." },
+    { text:"Starke Nachhaltigkeit hält die Substituierbarkeit von Naturkapital für problemlos möglich.", correct:false,
+      explain:"Falsch. Die starke Nachhaltigkeit lehnt die Substituierbarkeit von Naturkapital gerade ab." }
+  ]
+},
+
+{ id:"n6", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Entkopplung von Wachstum und Umweltschäden",
+  stem:"Welche der folgenden Aussagen zur Entkopplung ist/sind korrekt?",
+  statements:[
+    { text:"Relative Entkopplung liegt vor, wenn die Umweltschäden langsamer zunehmen als die Wirtschaftsleistung.", correct:true,
+      explain:"Richtig. Emissionen oder Ressourcenverbrauch steigen noch, aber weniger stark als das BIP." },
+    { text:"Bei absoluter Entkopplung sinkt die Umweltbelastung, während die Wirtschaftsleistung zunimmt.", correct:true,
+      explain:"Richtig. Beispiel: BIP steigt um 3 %, die CO₂-Emissionen sinken um 4 %." },
+    { text:"Nur relative Entkopplung gewährleistet, dass Wirtschaft nicht länger auf Kosten ökologischer Stabilität wächst.", correct:false,
+      explain:"Falsch. Nur die ABSOLUTE Entkopplung stellt sicher, dass Entwicklung nicht länger auf Kosten der Ökologie erfolgt." },
+    { text:"Eine absolute Entkopplung bei CO₂ ist bislang flächendeckend und einfach erreicht worden.", correct:false,
+      explain:"Falsch. Bei CO₂ ist absolute Entkopplung besonders schwierig und bisher nur in wenigen Bereichen und Staaten nachweisbar." },
+    { text:"Eine absolute Entkopplung gelang etwa bei Schadstoffen wie Schwefeldioxid (SO₂) oder FCKW.", correct:true,
+      explain:"Richtig. Dank technischer Ersatzstoffe und internationaler Umweltabkommen wurde hier absolute Entkopplung erreicht." }
+  ]
+},
+
+{ id:"n7", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Rebound-Effekt und Carbon Leakage",
+  stem:"Welche der folgenden Aussagen zu strukturellen Herausforderungen der Entkopplung ist/sind korrekt?",
+  statements:[
+    { text:"Der Rebound-Effekt bedeutet, dass Effizienzgewinne durch höheren Gesamtverbrauch teilweise wieder aufgehoben werden.", correct:true,
+      explain:"Richtig. Effizientere Technologien senken Kosten, was die Gesamtnachfrage nach Energie und Gütern erhöhen kann." },
+    { text:"Carbon Leakage bezeichnet die Verlagerung von Produktion und Emissionen in andere Weltregionen.", correct:true,
+      explain:"Richtig. Ein Teil scheinbarer Emissionsreduktionen ist auf solche Verlagerungen in Länder mit laxeren Standards zurückzuführen." },
+    { text:"Absolute Entkopplung ist allein eine technologische Herausforderung.", correct:false,
+      explain:"Falsch. Sie ist vor allem eine strukturelle und institutionelle Herausforderung; technologische Innovation allein reicht nicht." },
+    { text:"Energieeffizientere Geräte können durch vermehrte Nutzung zu mehr Gesamtverbrauch führen.", correct:true,
+      explain:"Richtig. Das ist ein typisches Beispiel für den Rebound-Effekt." },
+    { text:"Carbon Capture and Storage (CCS) ist in Österreich uneingeschränkt für alle Branchen erlaubt.", correct:false,
+      explain:"Falsch. In Österreich ist CCS nur für 'hard-to-abate'-Branchen (z. B. Teile der Zement- und Abfallindustrie, Luftfahrt) erlaubt." }
+  ]
+},
+
+{ id:"n8", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Planetare Grenzen und 1,5-Grad-Ziel",
+  stem:"Welche der folgenden Aussagen zu planetaren Grenzen und Klimazielen ist/sind korrekt?",
+  statements:[
+    { text:"Das Konzept der planetaren Grenzen wurde von Johan Rockström und Kolleg:innen entwickelt.", correct:true,
+      explain:"Richtig. Es definiert einen sicheren Handlungsraum (safe operating space) für die Menschheit." },
+    { text:"Laut Planetary Health Check 2025 sind sieben der neun planetaren Grenzen überschritten.", correct:true,
+      explain:"Richtig. Sieben von neun Grenzen sind überschritten." },
+    { text:"Die 1,5-Grad-Grenze ist laut Rockström weniger eine feste Erdsystemgrenze als eine politische Willensbekundung.", correct:true,
+      explain:"Richtig. Sie basiert primär auf politischer Entscheidungsfindung und wissenschaftlichen Risikobewertungen." },
+    { text:"Die Wahl der 1,5-Grad-Grenze geht auf das Kyoto-Protokoll von 1997 zurück.", correct:false,
+      explain:"Falsch. Sie geht auf das Pariser Abkommen von 2015 zurück, geprägt durch den Druck besonders vulnerabler Staaten." },
+    { text:"Um die Klimakrise zu bewältigen, müssen auch die übrigen planetaren Grenzen intakt bleiben.", correct:true,
+      explain:"Richtig. Die Klimagrenze allein einzuhalten genügt nicht – die planetaren Grenzen hängen zusammen." }
+  ]
+},
+
+{ id:"n9", topic:"nachhaltigkeit", difficulty:"mittel",
+  title:"Lineares Modell und Kreislaufwirtschaft",
+  stem:"Welche der folgenden Aussagen zur Kreislaufwirtschaft ist/sind korrekt?",
+  statements:[
+    { text:"In der Kreislaufwirtschaft werden Abfälle minimiert und Ressourcen im Kreislauf gehalten.", correct:true,
+      explain:"Richtig. Durch Wiederverwendung, Reparatur und Recycling bleibt der Ressourcenwert möglichst lange erhalten." },
+    { text:"Das lineare Wirtschaftsmodell folgt dem Prinzip 'Take – Make – Waste'.", correct:true,
+      explain:"Richtig. Rohstoffe werden entnommen, verarbeitet, genutzt und entsorgt." },
+    { text:"Regenerative Ressourcenströme sind ein Kennzeichen des linearen Modells.", correct:false,
+      explain:"Falsch. Regenerative Ressourcenströme kennzeichnen gerade die neuen, kreislauforientierten Modelle, nicht das lineare." },
+    { text:"Die derzeitige lineare Wirtschaftsweise trägt zum Überschreiten planetarer Grenzen bei.", correct:true,
+      explain:"Richtig. Sie destabilisiert zentrale Erdsysteme und erhöht den Druck auf die planetaren Grenzen." },
+    { text:"Kreislaufwirtschaft zielt darauf ab, den Ressourcenverbrauch durch immer kürzere Produktlebensdauern zu erhöhen.", correct:false,
+      explain:"Falsch. Ziel ist gerade der Werterhalt und längere Lebensdauern, nicht ein höherer Verbrauch." }
+  ]
+},
+
+{ id:"n10", topic:"nachhaltigkeit", difficulty:"schwer",
+  title:"Kohlenstoffbudget und Donut-Modell",
+  stem:"Welche der folgenden Aussagen zu Kohlenstoffbudget und Wohlstandsgrenzen ist/sind korrekt?",
+  statements:[
+    { text:"Das Kohlenstoffbudget bezeichnet die maximale CO₂-Menge, die noch emittiert werden darf, ohne eine bestimmte Erwärmungsgrenze zu überschreiten.", correct:true,
+      explain:"Richtig. Es dient als Leitgröße für Klimaschutzmaßnahmen und Reduktionsziele." },
+    { text:"Das Kohlenstoffbudget wird in Gigatonnen CO₂ (GtCO₂) angegeben.", correct:true,
+      explain:"Richtig. So lässt sich die noch verbleibende Emissionsmenge beziffern." },
+    { text:"Das Donut-Modell kombiniert ein soziales Fundament mit einer ökologischen Decke (planetare Belastungsgrenzen).", correct:true,
+      explain:"Richtig. Zwischen sozialem Fundament und ökologischer Decke liegt der sichere und gerechte Handlungsraum." },
+    { text:"Suffizienz bedeutet, den Konsum immer weiter zu steigern.", correct:false,
+      explain:"Falsch. Suffizienz steht für 'genug, aber nicht zu viel' – also für ein bewusstes Maßhalten beim Konsum." },
+    { text:"Ziel nachhaltiger Wirtschaft ist ein gutes Leben für alle innerhalb der planetaren Grenzen.", correct:true,
+      explain:"Richtig. Das ist die Kernidee des Wirtschaftens innerhalb der Erdsystemgrenzen." }
+  ]
+}
+,
+
+/* ===== UNTERNEHMEN (Erweiterung) ===== */
+{ id:"u5", topic:"unternehmen", difficulty:"mittel",
+  title:"Wirtschaftssektoren",
+  stem:"Welche der folgenden Aussagen zu den Wirtschaftssektoren ist/sind korrekt?",
+  statements:[
+    { text:"Der primäre Sektor umfasst die Rohstoffgewinnung, insbesondere Land- und Forstwirtschaft.", correct:true,
+      explain:"Richtig. Auch Anbau und Ernte von Früchten zählen zum primären Sektor." },
+    { text:"Der sekundäre Sektor umfasst Handel, Tourismus und sonstige Dienstleistungen.", correct:false,
+      explain:"Falsch. Das ist der tertiäre Sektor. Der sekundäre Sektor umfasst die Industrie und das produzierende Gewerbe." },
+    { text:"Eine Steuerberaterin, die Bilanzen für Unternehmen erstellt, ist im tertiären Sektor tätig.", correct:true,
+      explain:"Richtig. Dienstleistungen zählen zum tertiären Sektor." },
+    { text:"Der Anteil des tertiären Sektors an der Wirtschaftsleistung in Österreich beträgt rund 70 %.", correct:true,
+      explain:"Richtig. Mit steigender wirtschaftlicher Entwicklung gewinnt der Dienstleistungssektor an Bedeutung." },
+    { text:"Mit steigender wirtschaftlicher Entwicklung sinkt typischerweise der Anteil des tertiären Sektors.", correct:false,
+      explain:"Falsch. Der Anteil des tertiären Sektors STEIGT in der Regel mit dem Entwicklungsgrad eines Landes." }
+  ]
+},
+
+{ id:"u6", topic:"unternehmen", difficulty:"mittel",
+  title:"KMU und Größenklassen",
+  stem:"Welche der folgenden Aussagen zu KMU und Unternehmensgröße ist/sind korrekt?",
+  statements:[
+    { text:"Rund 99 % der Unternehmen in der EU und in Österreich sind KMU.", correct:true,
+      explain:"Richtig. KMU dominieren die Unternehmenslandschaft sowohl in der EU als auch in Österreich." },
+    { text:"Rund zwei Drittel der Erwerbstätigen arbeiten in KMU.", correct:true,
+      explain:"Richtig. KMU sind wichtige Arbeitgeber und tragen wesentlich zur Wertschöpfung bei." },
+    { text:"Ein Kleinstunternehmen hat laut EU-Definition bis zu 49 Mitarbeiter:innen.", correct:false,
+      explain:"Falsch. Ein Kleinstunternehmen hat bis zu 9 Mitarbeiter:innen; bis 49 spricht man von einem kleinen Unternehmen." },
+    { text:"Die KMU-Definition stützt sich u. a. auf die Mitarbeiterzahl sowie Umsatz bzw. Bilanzsumme.", correct:true,
+      explain:"Richtig. Neben der Beschäftigtenzahl sind auch finanzielle Schwellenwerte maßgeblich." },
+    { text:"Großunternehmen beginnen ab 250 Mitarbeiter:innen.", correct:true,
+      explain:"Richtig. Mittlere Unternehmen reichen bis 249 Mitarbeiter:innen, ab 250 spricht man von Großunternehmen." }
+  ]
+},
+
+{ id:"u7", topic:"unternehmen", difficulty:"mittel",
+  title:"Das Einzelunternehmen",
+  stem:"Welche der folgenden Aussagen zum Einzelunternehmen ist/sind korrekt?",
+  statements:[
+    { text:"Beim Einzelunternehmen trägt eine Person die Entscheidungen und das unternehmerische Risiko.", correct:true,
+      explain:"Richtig. Eine einzelne Person führt das Unternehmen und trägt das Risiko allein." },
+    { text:"Der Einzelunternehmer haftet ausschließlich mit dem betrieblichen Vermögen.", correct:false,
+      explain:"Falsch. Die Haftung ist unbeschränkt und umfasst auch das Privatvermögen." },
+    { text:"Einzelunternehmen sind relativ einfach und ohne gesetzliches Mindestkapital zu gründen.", correct:true,
+      explain:"Richtig. Es gibt kein gesetzliches Mindestkapital, das Kapital bringt der Unternehmer meist allein auf." },
+    { text:"Eine gescheiterte Selbstständigkeit ist ein häufiger Grund für einen Privatkonkurs.", correct:true,
+      explain:"Richtig. Wegen der unbeschränkten Haftung kann das Scheitern auch private finanzielle Schwierigkeiten nach sich ziehen." },
+    { text:"Rund 85 % der Unternehmen in Österreich sind Einzelunternehmen.", correct:true,
+      explain:"Richtig. Etwa jedes zehnte Unternehmen ist eine GmbH, gefolgt von je rund 2 % OG und KG." }
+  ]
+},
+
+{ id:"u8", topic:"unternehmen", difficulty:"schwer",
+  title:"Die Offene Gesellschaft (OG)",
+  stem:"Welche der folgenden Aussagen zur Offenen Gesellschaft ist/sind korrekt?",
+  statements:[
+    { text:"Eine OG wird von mindestens zwei Gesellschafter:innen gegründet.", correct:true,
+      explain:"Richtig. Die OG benötigt mindestens zwei Gesellschafter:innen." },
+    { text:"In der OG gibt es zwei verschiedene Arten von Gesellschafter:innen.", correct:false,
+      explain:"Falsch. Die OG kennt nur EINE Art von Gesellschafter:innen. Zwei Arten (Komplementär/Kommanditist) gibt es bei der KG." },
+    { text:"Alle OG-Gesellschafter:innen sind zur Geschäftsführung berechtigt und verpflichtet.", correct:true,
+      explain:"Richtig. In der OG führen grundsätzlich alle Gesellschafter:innen die Geschäfte." },
+    { text:"Für die OG gibt es ein gesetzliches Mindestkapital von 10.000 Euro.", correct:false,
+      explain:"Falsch. Für die OG gibt es – wie beim Einzelunternehmen – kein gesetzliches Mindestkapital." },
+    { text:"OG-Gesellschafter:innen haften solidarisch mit dem gesamten Privatvermögen für den Gesamtbetrag der Schulden.", correct:true,
+      explain:"Richtig. Die Haftung ist persönlich, unbeschränkt und solidarisch." }
+  ]
+},
+
+{ id:"u9", topic:"unternehmen", difficulty:"schwer",
+  title:"Die Kommanditgesellschaft (KG)",
+  stem:"Welche der folgenden Aussagen zur Kommanditgesellschaft ist/sind korrekt?",
+  statements:[
+    { text:"In der KG gibt es Komplementäre und Kommanditisten.", correct:true,
+      explain:"Richtig. Die KG unterscheidet zwischen diesen beiden Gesellschaftertypen." },
+    { text:"Der Kommanditist haftet unbeschränkt mit seinem gesamten Privatvermögen.", correct:false,
+      explain:"Falsch. Der Kommanditist haftet nur bis zur Höhe seiner Einlage." },
+    { text:"Der Komplementär ist im Hinblick auf Mitarbeit und Haftung mit einem OG-Gesellschafter vergleichbar.", correct:true,
+      explain:"Richtig. Er führt die Geschäfte und haftet unbeschränkt." },
+    { text:"Kommanditisten haben Kontrollrechte und dürfen in die Bücher der Gesellschaft Einsicht nehmen.", correct:true,
+      explain:"Richtig. Trotz beschränkter Haftung und fehlender Mitarbeit stehen ihnen Kontrollrechte zu." },
+    { text:"Eine KG benötigt mindestens zwei Komplementäre.", correct:false,
+      explain:"Falsch. Es genügt mindestens ein Komplementär – daneben mindestens ein Kommanditist." }
+  ]
+},
+
+{ id:"u10", topic:"unternehmen", difficulty:"schwer",
+  title:"Die GmbH",
+  stem:"Welche der folgenden Aussagen zur Gesellschaft mit beschränkter Haftung ist/sind korrekt?",
+  statements:[
+    { text:"Das Mindeststammkapital der GmbH beträgt seit 1.1.2024 10.000 Euro.", correct:true,
+      explain:"Richtig. Davor lag es bei 35.000 Euro." },
+    { text:"Jede einzelne Stammeinlage muss mindestens 70 Euro betragen.", correct:true,
+      explain:"Richtig. Bei der GmbH beträgt die Mindeststammeinlage 70 Euro (bei der FlexKapG nur 1 Euro)." },
+    { text:"Das gesamte Stammkapital muss zwingend in bar geleistet werden.", correct:false,
+      explain:"Falsch. Mindestens die Hälfte ist in Geld aufzubringen, der Rest kann eine Sacheinlage (z. B. Computer, Auto) sein." },
+    { text:"Eine GmbH benötigt mindestens zwei Gesellschafter:innen.", correct:false,
+      explain:"Falsch. Es muss zumindest einen Gesellschafter geben – eine Ein-Personen-GmbH ist möglich." },
+    { text:"Die GmbH ist eine juristische Person mit eigener Rechtspersönlichkeit.", correct:true,
+      explain:"Richtig. Als Kapitalgesellschaft kann sie selbst Verträge schließen, klagen und geklagt werden." }
+  ]
+},
+
+{ id:"u11", topic:"unternehmen", difficulty:"schwer",
+  title:"Die Flexible Kapitalgesellschaft (FlexKapG)",
+  stem:"Welche der folgenden Aussagen zur FlexKapG ist/sind korrekt?",
+  statements:[
+    { text:"Bei der FlexKapG beträgt das Stammkapital ebenfalls 10.000 Euro.", correct:true,
+      explain:"Richtig. Wie bei der GmbH liegt das Stammkapital bei 10.000 Euro." },
+    { text:"Die Mindesthöhe einer einzelnen Stammeinlage beträgt bei der FlexKapG nur 1 Euro.", correct:true,
+      explain:"Richtig. Das ist ein wesentlicher Unterschied zur GmbH (dort 70 Euro)." },
+    { text:"Die FlexKapG sieht Unternehmenswert-Anteile vor, die eine einfache Mitarbeiterbeteiligung ermöglichen sollen.", correct:true,
+      explain:"Richtig. Diese Sonderform des Stammkapitals soll die Beteiligung von Mitarbeiter:innen erleichtern." },
+    { text:"Unternehmenswert-Beteiligte haben volles Stimmrecht in der Gesellschafterversammlung.", correct:false,
+      explain:"Falsch. Sie haben Anspruch auf ihren Gewinnanteil, verfügen aber über kein Stimmrecht." },
+    { text:"Schon ein einziger Gesellschafter genügt zur Gründung einer FlexKapG.", correct:true,
+      explain:"Richtig. Ebenso wie bei der GmbH reicht ein Gesellschafter." }
+  ]
+},
+
+{ id:"u12", topic:"unternehmen", difficulty:"schwer",
+  title:"Aktiengesellschaft und SE",
+  stem:"Welche der folgenden Aussagen zur AG und zur Europäischen Gesellschaft (SE) ist/sind korrekt?",
+  statements:[
+    { text:"Das Mindestgrundkapital einer AG beträgt 70.000 Euro.", correct:true,
+      explain:"Richtig. Das Grundkapital wird in Aktien aufgeteilt." },
+    { text:"Aktionäre haften persönlich mit ihrem Privatvermögen für die Schulden der AG.", correct:false,
+      explain:"Falsch. Aktionäre haften nicht persönlich; sie riskieren nur das in den Aktienkauf investierte Kapital." },
+    { text:"Der Vorstand führt die Geschäfte und wird vom Aufsichtsrat bestellt und abberufen.", correct:true,
+      explain:"Richtig. Der Vorstand handelt in eigener Verantwortung und vertritt die Gesellschaft." },
+    { text:"Die Societas Europaea (SE) hat ein Mindestkapital von 120.000 Euro.", correct:true,
+      explain:"Richtig. Die SE ist eine Variante der AG mit einheitlichem EU-/EWR-weitem Rechtsrahmen." },
+    { text:"Im Firmenbuch werden die Namen der einzelnen Aktionäre einer AG eingetragen.", correct:false,
+      explain:"Falsch. Die Aktionäre einer AG werden im Firmenbuch gerade NICHT eingetragen (anders als die Gesellschafter anderer Rechtsformen)." }
+  ]
+},
+
+{ id:"u13", topic:"unternehmen", difficulty:"schwer",
+  title:"Die Genossenschaft",
+  stem:"Welche der folgenden Aussagen zur Genossenschaft ist/sind korrekt?",
+  statements:[
+    { text:"Im Vordergrund der Genossenschaft steht die Förderung des Erwerbs und der Wirtschaft ihrer Mitglieder.", correct:true,
+      explain:"Richtig. Nicht die Gewinnmaximierung, sondern das gemeinsame Wirtschaften steht im Mittelpunkt." },
+    { text:"Genossenschaften benötigen ein gesetzliches Mindestkapital von 35.000 Euro.", correct:false,
+      explain:"Falsch. Für Genossenschaften ist kein Mindestkapital notwendig; die Mitglieder beteiligen sich mit einer Einlage." },
+    { text:"Bei einer Genossenschaft gilt grundsätzlich das Kopfstimmrecht.", correct:true,
+      explain:"Richtig. Jedes Mitglied hat unabhängig vom Kapitalanteil eine Stimme; die Satzung kann abweichen." },
+    { text:"Gewinne werden reinvestiert oder als Rückvergütungen an die Mitglieder ausgezahlt.", correct:true,
+      explain:"Richtig. So profitieren die Mitglieder vom gemeinsamen Wirtschaften." },
+    { text:"Der Ein- und Austritt aus einer Genossenschaft ist sehr schwierig und unflexibel.", correct:false,
+      explain:"Falsch. Ein- und Austritt sind einfach; die Mitgliederzahl ist leicht veränderlich." }
+  ]
+},
+
+{ id:"u14", topic:"unternehmen", difficulty:"mittel",
+  title:"Kapitalgesellschaften allgemein",
+  stem:"Welche der folgenden Aussagen zu Kapitalgesellschaften ist/sind korrekt?",
+  statements:[
+    { text:"Kapitalgesellschaften besitzen eine eigene Rechtspersönlichkeit und gelten als juristische Personen.", correct:true,
+      explain:"Richtig. Im Gegensatz zu natürlichen Personen brauchen sie aber Menschen, die für sie handeln." },
+    { text:"Bei Kapitalgesellschaften können Kapitalaufbringung und Geschäftsführung getrennt sein.", correct:true,
+      explain:"Richtig. Gesellschafter:innen stellen Kapital bereit, müssen aber nicht selbst die Geschäfte führen." },
+    { text:"Gesellschafter:innen von Kapitalgesellschaften müssen zwingend im Unternehmen mitarbeiten.", correct:false,
+      explain:"Falsch. Sie müssen nicht notwendigerweise mitarbeiten – das ist gerade ein Kennzeichen der Kapitalgesellschaft." },
+    { text:"Das Gesetz schreibt für Kapitalgesellschaften eine Mindestkapitalhöhe vor.", correct:true,
+      explain:"Richtig. Z. B. GmbH 10.000 Euro, AG 70.000 Euro." },
+    { text:"Eine juristische Person kann selbst keine Verträge abschließen oder klagen.", correct:false,
+      explain:"Falsch. Als juristische Person kann sie Geschäfte machen, Verträge schließen, klagen und geklagt werden." }
+  ]
+},
+
+{ id:"u15", topic:"unternehmen", difficulty:"mittel",
+  title:"Eintragung ins Firmenbuch",
+  stem:"Welche der folgenden Aussagen zum Firmenbuch ist/sind korrekt?",
+  statements:[
+    { text:"OG, KG, GmbH, AG und Genossenschaften müssen ins Firmenbuch eingetragen werden.", correct:true,
+      explain:"Richtig. Diese Rechtsformen sind unabhängig von ihrer Größe eintragungspflichtig." },
+    { text:"Das Firmenbuch ist eine öffentliche, von Gerichten geführte Unternehmensdatenbank.", correct:true,
+      explain:"Richtig. Die Einsichtnahme erhöht die Transparenz und kann Geschäftsabschlüsse fördern." },
+    { text:"Ein Einzelunternehmen muss sich ab einem Umsatz von mehr als 700.000 Euro in zwei aufeinanderfolgenden Jahren eintragen lassen.", correct:true,
+      explain:"Richtig. Alternativ greift die Pflicht ab mehr als 1 Mio. Euro Umsatz in einem Jahr." },
+    { text:"Eine freiwillige Eintragung von Einzelunternehmen ist nicht möglich.", correct:false,
+      explain:"Falsch. Eine freiwillige Eintragung ist möglich, etwa wegen der Transparenz gegenüber Geschäftspartnern." },
+    { text:"Die Firmenbucheintragung enthält die Firma, den Sitz und den Unternehmensgegenstand.", correct:true,
+      explain:"Richtig. Zusätzlich u. a. die Namen der Gesellschafter (nicht der Aktionäre) und wer die Geschäfte führen darf." }
+  ]
+},
+
+{ id:"u16", topic:"unternehmen", difficulty:"schwer",
+  title:"Rechtsformwahl und Haftungsvergleich",
+  stem:"Welche der folgenden Aussagen zur Wahl der Rechtsform ist/sind korrekt?",
+  statements:[
+    { text:"Wer hohe Kapitalsummen aufbringen will, wählt eher eine Kapitalgesellschaft als eine Personengesellschaft.", correct:true,
+      explain:"Richtig. Durch viele Gesellschafter:innen mit beschränkter Haftung lassen sich höhere Summen leichter aufbringen." },
+    { text:"Bei der GmbH haften die Gesellschafter nur mit ihrer Stammeinlage.", correct:true,
+      explain:"Richtig. Die Haftung ist auf die Einlage beschränkt." },
+    { text:"Genossenschafter haften in der Regel mit ihrer Einlage in (üblicherweise) doppelter Höhe.", correct:true,
+      explain:"Richtig. Beispiel: Bei einem Anteil von 100 Euro haftet das Mitglied mit weiteren 100 Euro – maximal 200 Euro." },
+    { text:"Bei der OG haften die Gesellschafter nur bis zur Höhe ihrer Kapitaleinlage.", correct:false,
+      explain:"Falsch. OG-Gesellschafter:innen haften unbeschränkt und solidarisch, nicht nur mit ihrer Einlage." },
+    { text:"Personengesellschaften sind meist unabhängig von Bankkrediten, weil sie leicht hohe Kapitalsummen aufbringen.", correct:false,
+      explain:"Falsch. Sie haben meist nur wenige Gesellschafter und sind daher oft von der Finanzierung durch Bankkredite abhängig." }
+  ]
+},
+
+/* ===== FINANZIERUNG (Erweiterung) ===== */
+{ id:"f5", topic:"finanzierung", difficulty:"mittel",
+  title:"Eigenschaften des Eigenkapitals",
+  stem:"Welche der folgenden Aussagen zum Eigenkapital ist/sind korrekt?",
+  statements:[
+    { text:"Eigenkapital muss in der Regel nicht zurückgezahlt werden.", correct:true,
+      explain:"Richtig. Es steht meist unbefristet zur Verfügung und eignet sich für langfristige Investitionen." },
+    { text:"Auch Sacheinlagen wie ein Lieferwagen oder PCs erhöhen das Eigenkapital.", correct:true,
+      explain:"Richtig. Nicht nur Geld, sondern auch eingebrachte Sachwerte zählen zum Eigenkapital." },
+    { text:"Für Eigenkapital müssen auch in Verlustjahren verpflichtend Zinsen gezahlt werden.", correct:false,
+      explain:"Falsch. In Jahren ohne Gewinn fallen für Eigenkapital keine Zinsen an – anders als bei einem Kredit." },
+    { text:"Verluste reduzieren das Eigenkapital.", correct:true,
+      explain:"Richtig. Daher kann viel Eigenkapital helfen, Verlustjahre ohne Überschuldung zu überstehen." },
+    { text:"Eigenkapital eignet sich kaum für langfristige Investitionen.", correct:false,
+      explain:"Falsch. Gerade weil es langfristig (unbefristet) verfügbar ist, eignet es sich gut für langfristige Investitionen." }
+  ]
+},
+
+{ id:"f6", topic:"finanzierung", difficulty:"schwer",
+  title:"Fremdkapital und Lieferantenkredit",
+  stem:"Welche der folgenden Aussagen zum Fremdkapital ist/sind korrekt?",
+  statements:[
+    { text:"Kredite sind die wesentlichste Form von Fremdkapital.", correct:true,
+      explain:"Richtig. Langfristige Kredite gewähren v. a. Banken, kurzfristige auch Lieferant:innen." },
+    { text:"Fremdkapital steht in der Regel unbefristet und ohne Rückzahlungspflicht zur Verfügung.", correct:false,
+      explain:"Falsch. Fremdkapital steht meist nur befristet zur Verfügung, ist zu verzinsen und muss zurückgezahlt werden." },
+    { text:"Wird 'auf Ziel' gekauft, finanziert der Lieferant das Unternehmen kurzfristig (Lieferverbindlichkeit).", correct:true,
+      explain:"Richtig. Die spätere Zahlung ist eine kurzfristige Außenfinanzierung mit Fremdkapital." },
+    { text:"Verzichtet man auf einen möglichen Skonto, zahlt man wirtschaftlich betrachtet für das Zahlungsziel Zinsen.", correct:true,
+      explain:"Richtig. Der entgangene Skonto entspricht den Kosten für das Inanspruchnehmen des Zahlungsziels." },
+    { text:"Die Effektivverzinsung eines nicht genutzten Skontos ist meist sehr niedrig.", correct:false,
+      explain:"Falsch. Sie ist in den meisten Fällen sehr hoch, sodass eine kurzfristige Kontoüberziehung oft günstiger ist." }
+  ]
+},
+
+{ id:"f7", topic:"finanzierung", difficulty:"schwer",
+  title:"Innenfinanzierung und Selbstfinanzierung",
+  stem:"Welche der folgenden Aussagen zur Innenfinanzierung ist/sind korrekt?",
+  statements:[
+    { text:"Stammt die Finanzierungsquelle aus dem Umsatz des Unternehmens, spricht man von Innenfinanzierung.", correct:true,
+      explain:"Richtig. Die Selbstfinanzierung durch einbehaltene Gewinne ist deren wichtigste Form." },
+    { text:"Selbstfinanzierung durch einbehaltene Gewinne erhöht das Eigenkapital.", correct:true,
+      explain:"Richtig. Damit wird das Unternehmen krisenresistenter und wettbewerbsfähiger." },
+    { text:"Selbstfinanzierung macht ein Unternehmen abhängiger von Fremdkapitalgebern.", correct:false,
+      explain:"Falsch. Sie macht das Unternehmen WENIGER abhängig von Fremdkapitalgebern." },
+    { text:"Viel Eigenkapital erlaubt es, mehrere Verlustjahre zu überstehen, ohne überschuldet zu sein.", correct:true,
+      explain:"Richtig. Ist das Eigenkapital aufgebraucht und übersteigt das Fremdkapital das Vermögen, droht Überschuldung." },
+    { text:"Selbstfinanzierung ist eine Form der Außenfinanzierung.", correct:false,
+      explain:"Falsch. Selbstfinanzierung gehört zur Innenfinanzierung, weil die Mittel aus dem Umsatz stammen." }
+  ]
+},
+
+{ id:"f8", topic:"finanzierung", difficulty:"schwer",
+  title:"Abschreibungs- und Rückstellungsfinanzierung",
+  stem:"Welche der folgenden Aussagen zu Abschreibungs- und Rückstellungsfinanzierung ist/sind korrekt?",
+  statements:[
+    { text:"Die Abschreibung stellt einen Aufwand, aber keine Auszahlung dar.", correct:true,
+      explain:"Richtig. Der Wertverlust mindert den Gewinn, das Geld bleibt aber vorerst im Unternehmen." },
+    { text:"'Verdiente' Abschreibungen stehen zwischenzeitlich für andere Investitionen zur Verfügung.", correct:true,
+      explain:"Richtig. Werden die Abschreibungen über die Verkaufspreise verdient, entsteht ein Innenfinanzierungseffekt." },
+    { text:"Die Bildung einer Rückstellung erhöht den Gewinn des Unternehmens.", correct:false,
+      explain:"Falsch. Die Rückstellungsbildung ist ein Aufwand und VERRINGERT den Gewinn, ohne eine Auszahlung darzustellen." },
+    { text:"Pensionsrückstellungen können einen langfristigen Finanzierungseffekt haben.", correct:true,
+      explain:"Richtig. Da die Auszahlung erst in vielen Jahren erfolgt, stehen die Mittel lange zur Verfügung." },
+    { text:"Rückstellungen werden für mögliche zukünftige Aufwände gebildet, etwa für Prozesse oder Abfertigungen.", correct:true,
+      explain:"Richtig. Das Unternehmen sorgt damit für künftige, noch unsichere Aufwände vor." }
+  ]
+},
+
+{ id:"f9", topic:"finanzierung", difficulty:"mittel",
+  title:"Formen der Außenfinanzierung",
+  stem:"Welche der folgenden Aussagen zur Außenfinanzierung ist/sind korrekt?",
+  statements:[
+    { text:"Bei der Außenfinanzierung liegt die Finanzierungsquelle außerhalb des Unternehmens.", correct:true,
+      explain:"Richtig. Von außen können sowohl Eigen- als auch Fremdkapital zugeführt werden." },
+    { text:"Von außen kann sowohl Eigen- als auch Fremdkapital zugeführt werden.", correct:true,
+      explain:"Richtig. Beispiele sind neue Gesellschafter (Eigenkapital) oder Kredite (Fremdkapital)." },
+    { text:"Die Aktienemission ist eine Form der Außenfinanzierung mit Eigenkapital.", correct:true,
+      explain:"Richtig. Werden Aktien ausgegeben und gekauft, entsteht ein Eigenkapital-Finanzierungseffekt." },
+    { text:"Banken und Lieferant:innen sind typische Eigenkapitalgeber.", correct:false,
+      explain:"Falsch. Banken und Lieferant:innen sind die wichtigsten Fremdkapitalgeber." },
+    { text:"Eine GmbH kann zusätzliches Eigenkapital nur über die Börse durch Aktienemission aufnehmen.", correct:false,
+      explain:"Falsch. Eine GmbH gibt keine Aktien aus; sie kann z. B. neue Gesellschafter aufnehmen oder Stammeinlagen erhöhen." }
+  ]
+},
+
+{ id:"f10", topic:"finanzierung", difficulty:"schwer",
+  title:"Aktien als Finanzierungsinstrument",
+  stem:"Welche der folgenden Aussagen zu Aktien ist/sind korrekt?",
+  statements:[
+    { text:"Die Aktie verbrieft ein Anteilsrecht am Grundkapital der AG.", correct:true,
+      explain:"Richtig. Sie ist ein Eigenkapital-Wertpapier." },
+    { text:"Der Kurs einer Aktie kommt durch Angebot und Nachfrage zustande.", correct:true,
+      explain:"Richtig. Der Preis (Kurs) bildet sich am Markt für die Aktien dieser AG." },
+    { text:"Eine Rückzahlung des Aktienkapitals an die Aktionäre erfolgt am Ende einer festen Laufzeit.", correct:false,
+      explain:"Falsch. Eine Rückzahlung ist nicht vorgesehen; Aktienkapital ist unbefristet zur Verfügung gestelltes Kapital." },
+    { text:"Beim Handel bestehender Aktien zwischen Anleger:innen entsteht ein zusätzlicher Finanzierungseffekt für die AG.", correct:false,
+      explain:"Falsch. Ein Finanzierungseffekt entsteht nur bei der Emission; vom späteren Handel profitieren nur die Aktionäre." },
+    { text:"Aktien brachten seit dem Jahr 1900 im Schnitt einen höheren jährlichen Ertrag als Sparguthaben.", correct:true,
+      explain:"Richtig. Im Schnitt rund 6,5 % pro Jahr gegenüber 0,6 % bei Sparguthaben." }
+  ]
+},
+
+{ id:"f11", topic:"finanzierung", difficulty:"schwer",
+  title:"Bezugsrecht und Kapitalerhöhung",
+  stem:"Welche der folgenden Aussagen zur Kapitalerhöhung ist/sind korrekt?",
+  statements:[
+    { text:"Bei einer Kapitalerhöhung haben zunächst die bestehenden Aktionäre das Recht, junge Aktien zu kaufen.", correct:true,
+      explain:"Richtig. Dieses Recht ist das Bezugsrecht." },
+    { text:"Mit dem Bezugsrecht können Aktionäre ihren prozentuellen Anteil am Grundkapital gleich halten.", correct:true,
+      explain:"Richtig. Wer junge Aktien kauft, behält seinen Anteil; alternativ kann das Bezugsrecht verkauft werden." },
+    { text:"Das Bezugsrecht ist nicht übertragbar und kann nicht verkauft werden.", correct:false,
+      explain:"Falsch. Das Bezugsrecht kann verkauft werden – dann können andere Personen neue Aktionäre werden." },
+    { text:"'Junge Aktien' sind die im Rahmen einer Kapitalerhöhung neu ausgegebenen Aktien.", correct:true,
+      explain:"Richtig. Sie stehen den Altaktionären über das Bezugsrecht zuerst zur Verfügung." },
+    { text:"Eine Kapitalerhöhung führt der AG kein neues Kapital zu.", correct:false,
+      explain:"Falsch. Durch den Verkauf der jungen Aktien wird der AG neues Eigenkapital zugeführt." }
+  ]
+},
+
+{ id:"f12", topic:"finanzierung", difficulty:"schwer",
+  title:"Anleihen als Fremdkapital",
+  stem:"Welche der folgenden Aussagen zu Anleihen ist/sind korrekt?",
+  statements:[
+    { text:"Eine Anleihe verbrieft ein Forderungsrecht gegenüber dem Emittenten.", correct:true,
+      explain:"Richtig. Der Emittent (Staat oder Unternehmen) borgt sich Geld von den Anleihengläubigern aus." },
+    { text:"Anleihen werden auch Schuldverschreibungen, Renten oder Bonds genannt.", correct:true,
+      explain:"Richtig. Das sind gängige Bezeichnungen für Anleihen." },
+    { text:"Anleihen stellen für den Emittenten Eigenkapital dar.", correct:false,
+      explain:"Falsch. Anleihen sind Fremdkapital; sie verbriefen eine Forderung, kein Anteilsrecht." },
+    { text:"Durch die Stückelung kann ein großer Geldbetrag von vielen Geldgebern aufgebracht werden.", correct:true,
+      explain:"Richtig. Das Anleihenominale wird in kleinere Teilbeträge zerlegt." },
+    { text:"Am Ende der Laufzeit wird eine Anleihe üblicherweise getilgt (zurückgezahlt).", correct:true,
+      explain:"Richtig. Das ausgeborgte Geld wird zum Nominale (oder festgelegten Kurs) zurückgezahlt." }
+  ]
+},
+
+{ id:"f13", topic:"finanzierung", difficulty:"schwer",
+  title:"Verzinsung von Anleihen und Euribor",
+  stem:"Welche der folgenden Aussagen zur Verzinsung von Anleihen ist/sind korrekt?",
+  statements:[
+    { text:"Die Verzinsung einer Anleihe kann während der Laufzeit fix oder variabel sein.", correct:true,
+      explain:"Richtig. Die Verzinsung zählt zu den wichtigsten Anleihebedingungen." },
+    { text:"Variabel verzinste Anleihen werden auch 'Floater' genannt.", correct:true,
+      explain:"Richtig. Ihr Zinssatz wird an das allgemeine Zinsniveau angepasst." },
+    { text:"Der Euribor ist der Zinssatz, zu dem Zentralbanken Privatpersonen Kredite gewähren.", correct:false,
+      explain:"Falsch. Der Euribor (Euro Interbank Offered Rate) ist der Zinssatz, zu dem sich Banken untereinander kurzfristig Geld leihen." },
+    { text:"Anleihengläubiger erzielen Erträge aus Zinsen und gegebenenfalls aus Kursdifferenzen.", correct:true,
+      explain:"Richtig. Neben den Zinsen kann beim vorzeitigen Verkauf ein Kursgewinn (oder -verlust) entstehen." },
+    { text:"Bei variabler Verzinsung wird die Verzinsung an das allgemeine Zinsniveau (z. B. den Euribor) angepasst.", correct:true,
+      explain:"Richtig. So bewegt sich der Anleihezins mit dem Marktzins." }
+  ]
+},
+
+{ id:"f14", topic:"finanzierung", difficulty:"mittel",
+  title:"Finanzbedarf und Liquidität",
+  stem:"Welche der folgenden Aussagen zum Finanzbedarf ist/sind korrekt?",
+  statements:[
+    { text:"Neben dem langfristigen Finanzbedarf (Investitionen) gibt es auch einen kurzfristigen Finanzbedarf.", correct:true,
+      explain:"Richtig. Laufende Zahlungen wie Wareneinkauf, Löhne und Miete erzeugen kurzfristigen Bedarf." },
+    { text:"Oft müssen Lieferant:innen früher bezahlt werden, als Einnahmen aus Verkäufen eingehen.", correct:true,
+      explain:"Richtig. Diese zeitliche Lücke begründet den kurzfristigen Finanzierungsbedarf." },
+    { text:"Ist die Liquidität nicht mehr gegeben, droht dem Unternehmen die Insolvenz.", correct:true,
+      explain:"Richtig. Zahlungsfähigkeit ist überlebenswichtig für ein Unternehmen." },
+    { text:"Langfristige Investitionen sollten möglichst kurzfristig finanziert werden.", correct:false,
+      explain:"Falsch. Langfristig gebundenes Vermögen sollte auch langfristig finanziert werden (goldene Bilanzregel)." },
+    { text:"Finanzierung dient nur Investitionen, nicht laufenden Zahlungen wie Löhnen oder Miete.", correct:false,
+      explain:"Falsch. Finanzierung dient sowohl Investitionen als auch laufenden, wiederkehrenden Zahlungen." }
+  ]
+}
+,
+
+/* ===== RECHNUNGSWESEN (Erweiterung) ===== */
+{ id:"r5", topic:"rechnungswesen", difficulty:"mittel",
+  title:"Bereiche des Rechnungswesens",
+  stem:"Welche der folgenden Aussagen zu den Bereichen des betrieblichen Rechnungswesens ist/sind korrekt?",
+  statements:[
+    { text:"Die Finanzrechnung beantwortet, ob das Unternehmen mit seinen finanziellen Mitteln auskommt oder ein Finanzierungsbedarf besteht.", correct:true,
+      explain:"Richtig. Sie umfasst Finanzplanung, Budgetierung und Cashflow." },
+    { text:"Die Buchhaltung erstellt die Bilanz sowie die Gewinn- und Verlustrechnung.", correct:true,
+      explain:"Richtig. Sie zeigt das Vermögen und dessen Finanzierung sowie Gewinn oder Verlust." },
+    { text:"Die Kostenrechnung ist für alle Unternehmen gesetzlich verpflichtend.", correct:false,
+      explain:"Falsch. Die Kostenrechnung ist nicht gesetzlich verpflichtend; sie ist internes Rechnungswesen zu Steuerungszwecken." },
+    { text:"Die Buchhaltung wird auch als externes Rechnungswesen bezeichnet.", correct:true,
+      explain:"Richtig. Sie hat eine Informations- und Dokumentationsfunktion nach außen (u. a. für die Steuerbehörde)." },
+    { text:"Die Kostenrechnung beantwortet, wie viel ein im Unternehmen erzeugtes Produkt kostet.", correct:true,
+      explain:"Richtig. Sie zeigt auch, wie viel der Verkauf eines Produkts zur Kostendeckung beiträgt." }
+  ]
+},
+
+{ id:"r6", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Liquidität und Cashflow",
+  stem:"Welche der folgenden Aussagen zu Liquidität und Cashflow ist/sind korrekt?",
+  statements:[
+    { text:"Ein positiver Cashflow ist ein Indikator für Zahlungsfähigkeit.", correct:true,
+      explain:"Richtig. Übersteigen die Einzahlungen die Auszahlungen, gibt es einen Zahlungsmittelzufluss." },
+    { text:"Der Cashflow ergibt sich, indem Einzahlungen und Auszahlungen einer Periode gegenübergestellt werden.", correct:true,
+      explain:"Richtig. Er misst den Zu- oder Abfluss an Zahlungsmitteln." },
+    { text:"Cashflow und Gewinn sind stets identisch.", correct:false,
+      explain:"Falsch. Man kann einen Gewinn ohne liquide Mittel erzielen und liquide sein, ohne Gewinn zu machen." },
+    { text:"Übersteigen die Auszahlungen die Einzahlungen, ist die Zahlungsfähigkeit gefährdet.", correct:true,
+      explain:"Richtig. Dann muss das Unternehmen sofort Gegenmaßnahmen ergreifen." },
+    { text:"Um die Liquidität zu sichern, kann ein Unternehmen längere Zahlungsziele mit Lieferant:innen vereinbaren.", correct:true,
+      explain:"Richtig. Weitere Maßnahmen sind kürzere Zahlungsziele für Kund:innen, niedrigere Lagerstände oder ein kurzfristiger Kredit." }
+  ]
+},
+
+{ id:"r7", topic:"rechnungswesen", difficulty:"schwer",
+  title:"EAR und doppelte Buchhaltung",
+  stem:"Welche der folgenden Aussagen zur Gewinnermittlung ist/sind korrekt?",
+  statements:[
+    { text:"Einzelunternehmen und Personengesellschaften mit unter 700.000 Euro Umsatz dürfen eine Einnahmen-Ausgaben-Rechnung führen.", correct:true,
+      explain:"Richtig. Die EAR ist weniger aufwendig als die doppelte Buchhaltung." },
+    { text:"Kapitalgesellschaften müssen immer eine doppelte Buchhaltung führen.", correct:true,
+      explain:"Richtig. Unabhängig vom Umsatz erstellen sie Bilanz und G&V." },
+    { text:"Bei der doppelten Buchhaltung wird der Gewinn nur auf eine einzige Weise ermittelt.", correct:false,
+      explain:"Falsch. Der Gewinn ergibt sich aus der G&V UND aus dem Vergleich des Eigenkapitals – daher 'doppelte' Gewinnermittlung." },
+    { text:"Die Einnahmen-Ausgaben-Rechnung ist aufwendiger als die doppelte Buchhaltung.", correct:false,
+      explain:"Falsch. Die EAR ist gerade die weniger aufwendige Variante." },
+    { text:"Aktiengesellschaften und große GmbHs müssen ihren Jahresabschluss veröffentlichen.", correct:true,
+      explain:"Richtig. Im Firmenbuch geführte Unternehmen müssen zudem bestimmte Zahlen melden." }
+  ]
+},
+
+{ id:"r8", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Soll- und Haben-Logik der Bilanz",
+  stem:"Welche der folgenden Aussagen zur Logik der Bilanz ist/sind korrekt?",
+  statements:[
+    { text:"Die Summe der Aktiva entspricht stets der Summe der Passiva.", correct:true,
+      explain:"Richtig. Jeder Teil des Vermögens muss finanziert worden sein – daher die Bilanzgleichheit." },
+    { text:"Die Aktiva stehen auf der Sollseite, die Passiva auf der Habenseite der Bilanz.", correct:true,
+      explain:"Richtig. Daraus folgt die Soll-Haben-Gleichheit der Bilanz." },
+    { text:"Die Sollseite zeigt, woher die Mittel des Unternehmens stammen.", correct:false,
+      explain:"Falsch. Die Sollseite zeigt die Mittelverwendung (wofür). Die Mittelherkunft (woher) steht auf der Habenseite." },
+    { text:"Das Eigenkapital ist jener Teil des Vermögens, der NICHT mit Schulden finanziert wurde.", correct:true,
+      explain:"Richtig. Eigenkapital = Vermögen − Fremdkapital." },
+    { text:"Ein Steigen des Eigenkapitals im Vergleich zweier Stichtage bedeutet einen Verlust.", correct:false,
+      explain:"Falsch. Ein Steigen des Eigenkapitals bedeutet einen Gewinn, ein Sinken einen Verlust." }
+  ]
+},
+
+{ id:"r9", topic:"rechnungswesen", difficulty:"mittel",
+  title:"Anlage- und Umlaufvermögen",
+  stem:"Welche der folgenden Aussagen zu Anlage- und Umlaufvermögen ist/sind korrekt?",
+  statements:[
+    { text:"Anlagevermögen bleibt typischerweise länger als ein Jahr im Unternehmen.", correct:true,
+      explain:"Richtig. Dazu zählen z. B. Gebäude und Maschinen." },
+    { text:"Vorräte zählen zum Umlaufvermögen.", correct:true,
+      explain:"Richtig. Umlaufvermögen bleibt in der Regel kürzer als ein Jahr im Unternehmen." },
+    { text:"Maschinen und Gebäude zählen zum Umlaufvermögen.", correct:false,
+      explain:"Falsch. Maschinen und Gebäude sind Anlagevermögen, weil sie langfristig im Unternehmen bleiben." },
+    { text:"Ein 'umlaufintensives' Unternehmen hat deutlich mehr Umlauf- als Anlagevermögen.", correct:true,
+      explain:"Richtig. Beim Fahrradproduzenten dominieren z. B. die Vorräte." },
+    { text:"Die goldene Bilanzregel besagt, dass langfristig gebundenes Vermögen kurzfristig finanziert sein sollte.", correct:false,
+      explain:"Falsch. Die goldene Bilanzregel fordert, dass langfristig gebundenes Vermögen auch LANGFRISTIG finanziert ist." }
+  ]
+},
+
+{ id:"r10", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Die Gewinn- und Verlustrechnung",
+  stem:"Welche der folgenden Aussagen zur Gewinn- und Verlustrechnung ist/sind korrekt?",
+  statements:[
+    { text:"In der G&V werden von den Erlösen und Erträgen die Aufwände abgezogen.", correct:true,
+      explain:"Richtig. So wird das Jahresergebnis ermittelt." },
+    { text:"Abschreibungen und die Bildung von Rückstellungen zählen zu den Aufwänden.", correct:true,
+      explain:"Richtig. Neben Löhnen, Material und Miete mindern auch sie das Ergebnis." },
+    { text:"Übersteigt die Summe aus Erlösen und Erträgen die Aufwände, entsteht ein Verlust.", correct:false,
+      explain:"Falsch. In diesem Fall entsteht ein Gewinn; ein Verlust entsteht, wenn die Aufwände überwiegen." },
+    { text:"Das EBIT ist das Ergebnis vor Zinsen und Steuern.", correct:true,
+      explain:"Richtig. EBIT = Earnings Before Interest and Taxes." },
+    { text:"Der Gewinn erhöht das Eigenkapital.", correct:true,
+      explain:"Richtig. Daher kann der Gewinn auch über den Eigenkapitalvergleich ermittelt werden (doppelte Gewinnermittlung)." }
+  ]
+},
+
+{ id:"r11", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Die Cashflowrechnung",
+  stem:"Welche der folgenden Aussagen zur Cashflowrechnung ist/sind korrekt?",
+  statements:[
+    { text:"Die Cashflowrechnung gliedert sich in Betriebs-, Investitions- und Finanzierungstätigkeit.", correct:true,
+      explain:"Richtig. Diese drei Bereiche zeigen die Ursachen der Zu- und Abflüsse." },
+    { text:"Der Bereich Betriebstätigkeit gilt als wichtigster Teil der Cashflowrechnung.", correct:true,
+      explain:"Richtig. Er betrifft den Kern des Geschäfts; Investor:innen achten besonders darauf." },
+    { text:"Die Aufnahme eines Kredits zeigt sich im Bereich Investitionstätigkeit.", correct:false,
+      explain:"Falsch. Die Kreditaufnahme zählt zur Finanzierungstätigkeit." },
+    { text:"Der Kauf von Anlagevermögen schlägt sich im Bereich Investitionstätigkeit nieder.", correct:true,
+      explain:"Richtig. Auch der Verkauf von Anlagevermögen erscheint hier (als Mittelzufluss)." },
+    { text:"Investor:innen achten besonders auf den Cashflow aus der Betriebstätigkeit.", correct:true,
+      explain:"Richtig. Er zeigt, ob der Kernbereich des Unternehmens Einzahlungsüberschüsse erwirtschaftet." }
+  ]
+},
+
+{ id:"r12", topic:"rechnungswesen", difficulty:"mittel",
+  title:"Fixe und variable Kosten",
+  stem:"Welche der folgenden Aussagen zu den Kostenarten ist/sind korrekt?",
+  statements:[
+    { text:"Fixe Kosten fallen unabhängig von der produzierten Menge an.", correct:true,
+      explain:"Richtig. Dazu zählen z. B. Geschäftsführergehälter, Miete und Versicherungen." },
+    { text:"Die Miete für die Produktionshalle ist eine fixe Kostenart.", correct:true,
+      explain:"Richtig. Sie fällt unabhängig von der produzierten Stückzahl an." },
+    { text:"Die Materialkosten für die Bestandteile eines Fahrrads sind fixe Kosten.", correct:false,
+      explain:"Falsch. Materialkosten steigen (in der Regel proportional) mit der Produktionsmenge – sie sind variabel." },
+    { text:"Der kalkulatorische Unternehmerlohn ist eine Kostenart, die in der Buchhaltung nicht als Aufwand erfasst ist.", correct:true,
+      explain:"Richtig. Er ist eine typische Differenz zwischen Kosten und buchhalterischen Aufwänden." },
+    { text:"Variable Kosten bleiben bei steigender Produktionsmenge konstant.", correct:false,
+      explain:"Falsch. Variable Kosten steigen mit der Produktionsmenge; fixe Kosten bleiben konstant." }
+  ]
+},
+
+{ id:"r13", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Deckungsbeitrag berechnen",
+  scenario:"Ein Unternehmen verkauft ein Produkt um 60 Euro. Die variablen Stückkosten betragen 24 Euro.",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Der Deckungsbeitrag pro Stück beträgt 36 Euro.", correct:true,
+      explain:"Richtig. Deckungsbeitrag = Verkaufspreis − variable Kosten = 60 − 24 = 36 Euro." },
+    { text:"Die Deckungsquote beträgt 60 %.", correct:true,
+      explain:"Richtig. Deckungsquote = Deckungsbeitrag ÷ Verkaufspreis = 36 ÷ 60 = 60 %." },
+    { text:"Der Deckungsbeitrag ist jener Betrag, der zur Deckung der fixen Kosten beiträgt.", correct:true,
+      explain:"Richtig. Übersteigt der Preis die variablen Kosten, leistet die Differenz einen Beitrag zur Fixkostendeckung." },
+    { text:"Solange der Verkaufspreis über den variablen Kosten liegt, wird kein Deckungsbeitrag erzielt.", correct:false,
+      explain:"Falsch. Gerade dann WIRD ein Deckungsbeitrag erzielt – nämlich die Differenz zwischen Preis und variablen Kosten." },
+    { text:"Kurzfristig kann ein Verkauf über den variablen, aber unter den Vollkosten sinnvoll sein.", correct:true,
+      explain:"Richtig. Solange ein Deckungsbeitrag erzielt wird, ist das besser, als gar nicht zu verkaufen." }
+  ]
+},
+
+{ id:"r14", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Break-Even-Umsatz berechnen",
+  scenario:"Ein Unternehmen hat gesamte Fixkosten von 3 Mio. Euro. Die durchschnittliche Deckungsquote über alle Produkte beträgt 60 %.",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Der Break-Even-Umsatz beträgt 5 Mio. Euro.", correct:true,
+      explain:"Richtig. Break-Even-Umsatz = Fixkosten ÷ Deckungsquote = 3 Mio. ÷ 0,6 = 5 Mio. Euro." },
+    { text:"Oberhalb des Break-Even-Umsatzes kommt das Unternehmen in die Gewinnzone.", correct:true,
+      explain:"Richtig. Am Break-Even-Punkt sind alle Kosten gedeckt; darüber entsteht Gewinn." },
+    { text:"Der Break-Even-Umsatz berechnet sich, indem man die Fixkosten mit der Deckungsquote multipliziert.", correct:false,
+      explain:"Falsch. Die Fixkosten werden durch die Deckungsquote DIVIDIERT, nicht multipliziert." },
+    { text:"Am Break-Even-Punkt sind alle Kosten gerade gedeckt.", correct:true,
+      explain:"Richtig. Es wird weder Gewinn noch Verlust erzielt." },
+    { text:"Eine höhere Deckungsquote senkt bei gleichen Fixkosten den nötigen Break-Even-Umsatz.", correct:true,
+      explain:"Richtig. Je höher die Quote, desto weniger Umsatz ist zur Deckung der Fixkosten nötig." }
+  ]
+},
+
+{ id:"r15", topic:"rechnungswesen", difficulty:"schwer",
+  title:"Bilanzanalyse FunBike GmbH",
+  scenario:"Nachstehend sehen Sie eine vereinfachte Bilanz der FunBike GmbH, eines Fahrradproduzenten, per 31.12.20xx (alle Beträge in Euro). Das Anlagevermögen umfasst Grundstücke/Bauten, technische Anlagen/Geschäftsausstattung und Finanzanlagen.",
+  bilanz: {
+    aktiva: [
+      { name:"Anlagevermögen", value:"", head:true },
+      { name:"Grundstücke und Bauten", value:"750 000" },
+      { name:"Technische Anlagen, Geschäftsausstattung", value:"2 330 000" },
+      { name:"Finanzanlagen", value:"240 000" },
+      { name:"Umlaufvermögen", value:"", head:true },
+      { name:"Vorräte", value:"5 400 000" },
+      { name:"Forderungen aus Lieferungen und Leistungen", value:"598 000" },
+      { name:"Bankguthaben und Barbestand", value:"320 250" }
+    ],
+    passiva: [
+      { name:"Eigenkapital", value:"", head:true },
+      { name:"Bareinlagen der Gesellschafter", value:"525 000" },
+      { name:"Gewinn", value:"3 614 250" },
+      { name:"Fremdkapital", value:"", head:true },
+      { name:"Rückstellungen", value:"2 000 000" },
+      { name:"Bankkredite", value:"3 199 000" },
+      { name:"Verbindlichkeiten aus Lieferungen und Leistungen", value:"300 000" }
+    ],
+    summe: "9 638 250"
+  },
+  stem:"Welche der folgenden Aussagen zu dieser Bilanz ist/sind korrekt?",
+  statements:[
+    { text:"Die Summe der Aktiva entspricht der Summe der Passiva und beträgt 9.638.250 Euro.", correct:true,
+      explain:"Richtig. Vermögen = Kapital; die Bilanzsumme beträgt auf beiden Seiten 9.638.250 Euro." },
+    { text:"Das Eigenkapital beträgt 4.139.250 Euro.", correct:true,
+      explain:"Richtig. Eigenkapital = Bareinlagen 525.000 + Gewinn 3.614.250 = 4.139.250 Euro." },
+    { text:"Das Unternehmen ist anlageintensiv, weil das Anlagevermögen das Umlaufvermögen übersteigt.", correct:false,
+      explain:"Falsch. Das Umlaufvermögen (6.318.250) übersteigt das Anlagevermögen (3.320.000) – das Unternehmen ist umlaufintensiv." },
+    { text:"Verbleibt der hohe Gewinn im Unternehmen, stärkt er das Eigenkapital und die Innenfinanzierungskraft.", correct:true,
+      explain:"Richtig. Einbehaltene Gewinne erhöhen das Eigenkapital und machen das Unternehmen krisenresistenter." },
+    { text:"Das langfristige Vermögen ist nicht langfristig finanziert; die goldene Bilanzregel ist verletzt.", correct:false,
+      explain:"Falsch. Schon das Eigenkapital (über 4 Mio.) übersteigt das Anlagevermögen (gut 3 Mio.) – die goldene Bilanzregel ist erfüllt." }
+  ]
+},
+
+{ id:"r16", topic:"rechnungswesen", difficulty:"mittel",
+  title:"Gewinn, Liquidität und Kosten",
+  stem:"Welche der folgenden Aussagen zu Gewinn, Liquidität und Kosten ist/sind korrekt?",
+  statements:[
+    { text:"Man kann einen Gewinn erzielen, ohne über liquide Mittel zu verfügen.", correct:true,
+      explain:"Richtig. Gewinn und Cashflow sind unterschiedliche Kennzahlen." },
+    { text:"Kosten sind der wertmäßige Verbrauch von Leistungsfaktoren bei der Leistungserstellung.", correct:true,
+      explain:"Richtig. Dazu zählen z. B. Maschinen, Arbeit und Einsatzstoffe." },
+    { text:"Kosten und Aufwände aus der Buchhaltung sind immer exakt identisch.", correct:false,
+      explain:"Falsch. Sie entsprechen sich weitgehend, es gibt aber Differenzen wie den kalkulatorischen Unternehmerlohn." },
+    { text:"Jedes Unternehmen ist gesetzlich verpflichtet, seinen Gewinn oder Verlust je Geschäftsjahr zu ermitteln.", correct:true,
+      explain:"Richtig. Das ist u. a. für die Berechnung der Ertragssteuern notwendig." },
+    { text:"Auf Dauer kann ein Unternehmen auch dann bestehen, wenn seine Kosten nicht durch Erträge gedeckt sind.", correct:false,
+      explain:"Falsch. Auf Dauer kann kein Unternehmen existieren, wenn die Kosten nicht durch die Erträge gedeckt sind." }
+  ]
+},
+
+/* ===== MARKETING (Erweiterung) ===== */
+{ id:"m5", topic:"marketing", difficulty:"mittel",
+  title:"Grundverständnis Marketing",
+  stem:"Welche der folgenden Aussagen zum Marketing ist/sind korrekt?",
+  statements:[
+    { text:"Marketing ist die systematische Ausrichtung des gesamten Unternehmens an den Bedürfnissen und Wünschen der Kunden.", correct:true,
+      explain:"Richtig. Marketing betrifft alle betrieblichen Bereiche, nicht nur die Werbung." },
+    { text:"Werbung ist nur ein kleiner Teilbereich des gesamten Marketings.", correct:true,
+      explain:"Richtig. Entgegen der landläufigen Vermutung umfasst Marketing weit mehr als Werbung." },
+    { text:"Im Marketing zählen ausschließlich physisch greifbare Güter als 'Produkt'.", correct:false,
+      explain:"Falsch. Auch Dienstleistungen, Ideen, Organisationen, Personen und Orte gelten im Marketing als 'Produkt'." },
+    { text:"Auch Hilfsorganisationen, Parteien und Städte können Marketing betreiben.", correct:true,
+      explain:"Richtig. Marketing ist nicht auf klassische Produktunternehmen beschränkt." },
+    { text:"Produziert ein Unternehmen 'am Markt vorbei', ist sein wirtschaftlicher Erfolg gefährdet.", correct:true,
+      explain:"Richtig. Wird das Angebot nicht nachgefragt, kann das Unternehmen seine Kosten nicht decken." }
+  ]
+},
+
+{ id:"m6", topic:"marketing", difficulty:"schwer",
+  title:"Marktsegmentierung und USP",
+  stem:"Welche der folgenden Aussagen zu Segmentierung und Positionierung ist/sind korrekt?",
+  statements:[
+    { text:"Bei der Marktsegmentierung wird der Markt in Käufergruppen mit gemeinsamen Merkmalen aufgeteilt.", correct:true,
+      explain:"Richtig. So lassen sich Produktentwicklung, Preise, Absatzwege und Werbung gezielter ausrichten." },
+    { text:"Zielgruppen sind ausschließlich jene Personen, die das Produkt selbst kaufen.", correct:false,
+      explain:"Falsch. Zielgruppen umfassen auch jene, die die Kaufentscheidung beeinflussen, und jene, die das Produkt nutzen." },
+    { text:"Zielgruppenorientiertes Marketing erfolgt in den Phasen Segmentierung, Auswahl und Positionierung.", correct:true,
+      explain:"Richtig. Zuerst segmentieren, dann Zielsegmente festlegen, dann positionieren." },
+    { text:"Eine USP (Unique Selling Proposition) soll ein Produkt unverwechselbar von der Konkurrenz abheben.", correct:true,
+      explain:"Richtig. Das Produkt soll für die Zielgruppe besonders wünschenswert und unterscheidbar sein." },
+    { text:"Die Marktpositionierung beschreibt allein die Produktionskosten eines Produkts.", correct:false,
+      explain:"Falsch. Die Positionierung beschreibt, wie das Produkt von den Konsument:innen wahrgenommen wird bzw. werden soll." }
+  ]
+},
+
+{ id:"m7", topic:"marketing", difficulty:"mittel",
+  title:"Grund- und Zusatznutzen",
+  stem:"Welche der folgenden Aussagen zum Kundennutzen ist/sind korrekt?",
+  statements:[
+    { text:"Der Grundnutzen eines Fahrrads ist das Fahren.", correct:true,
+      explain:"Richtig. Der Grundnutzen ist der primäre Zweck eines Produkts." },
+    { text:"Der Geltungsnutzen ist ein Zusatznutzen und betrifft das Prestige, sich ein Produkt leisten zu können.", correct:true,
+      explain:"Richtig. Der Geltungsnutzen geht über den Grundnutzen hinaus." },
+    { text:"Der Erlebnisnutzen zählt zum Grundnutzen.", correct:false,
+      explain:"Falsch. Der Erlebnisnutzen ist ein Zusatznutzen, nicht der Grundnutzen." },
+    { text:"Welchen Nutzen ein Produkt stiftet, sollte bei Entwicklung und Vermarktung genau überlegt werden.", correct:true,
+      explain:"Richtig. Der Kundennutzen ist zentral für Produktentwicklung und Kommunikation." },
+    { text:"Ein Produkt hat für Käufer:innen immer nur einen einzigen Nutzen.", correct:false,
+      explain:"Falsch. Man unterscheidet Grundnutzen und (mehrere) Zusatznutzen wie Geltungs- und Erlebnisnutzen." }
+  ]
+},
+
+{ id:"m8", topic:"marketing", difficulty:"mittel",
+  title:"Der Marketing-Mix (4 Ps)",
+  stem:"Welche der folgenden Aussagen zum Marketing-Mix ist/sind korrekt?",
+  statements:[
+    { text:"Die Produktpolitik (Product) betrifft Sortimentsumfang, Produktgestaltung und Zusatzleistungen.", correct:true,
+      explain:"Richtig. Auch rund um ein Produkt angebotene Dienstleistungen zählen dazu." },
+    { text:"Die Preispolitik (Price) umfasst Rabatte, Aktionen sowie Liefer- und Zahlungsbedingungen.", correct:true,
+      explain:"Richtig. Sie betrifft die Höhe und Gestaltung der Preise und Konditionen." },
+    { text:"Die Distributionspolitik (Place) betrifft vor allem die Werbebotschaft des Unternehmens.", correct:false,
+      explain:"Falsch. Die Werbebotschaft gehört zur Kommunikationspolitik (Promotion). Place betrifft den Absatz- und Transportweg." },
+    { text:"Die Kommunikationspolitik (Promotion) umfasst Werbung, Verkaufsförderung und Öffentlichkeitsarbeit.", correct:true,
+      explain:"Richtig. Werbung ist dabei nur ein Teilbereich." },
+    { text:"Die Maßnahmen des Marketing-Mix sollten nur fall- oder phasenweise eingesetzt werden.", correct:false,
+      explain:"Falsch. Sie sollten laufend und systematisch aufeinander abgestimmt zum Einsatz kommen." }
+  ]
+},
+
+{ id:"m9", topic:"marketing", difficulty:"schwer",
+  title:"Der Produktlebenszyklus",
+  stem:"Welche der folgenden Aussagen zum Produktlebenszyklus ist/sind korrekt?",
+  statements:[
+    { text:"In der Einführungsphase wird wegen hoher Entwicklungs- und Werbekosten erst gegen Ende Gewinn erzielt.", correct:true,
+      explain:"Richtig. Hat das Produkt in dieser Phase keinen Erfolg, verschwindet es bald wieder vom Markt." },
+    { text:"In der Wachstumsphase steigen Umsätze und Gewinne kräftig, und die Konkurrenz wird aufmerksam.", correct:true,
+      explain:"Richtig. Nachahmer treten auf, die Preisgestaltung wird entscheidend." },
+    { text:"In der Reifephase erreicht der Umsatz sein Minimum.", correct:false,
+      explain:"Falsch. In der Reifephase erreicht der Umsatz sein MAXIMUM, während die Gewinne wegen der Konkurrenz schon wieder sinken." },
+    { text:"In der Sättigungsphase fallen Umsatz und Gewinne, der Markt beginnt zu schrumpfen.", correct:true,
+      explain:"Richtig. Spätestens hier muss entschieden werden, ob das Produkt eliminiert oder per Relaunch erneuert wird." },
+    { text:"Ein Relaunch ist der Versuch, ein Produkt durch eine Produktveränderung neu zu starten.", correct:true,
+      explain:"Richtig. Ein Relaunch soll den Lebenszyklus eines Produkts verlängern." }
+  ]
+},
+
+{ id:"m10", topic:"marketing", difficulty:"schwer",
+  title:"Produktpolitische Maßnahmen",
+  stem:"Welche der folgenden Aussagen zu produktpolitischen Maßnahmen ist/sind korrekt?",
+  statements:[
+    { text:"Erweitert ein Unternehmen sein Sortiment um neue, andersartige Produktgruppen, ist das Produktdiversifikation.", correct:true,
+      explain:"Richtig. Beispiel: Ein Fahrradhersteller bietet zusätzlich Sportbekleidung und Fitnessgeräte an." },
+    { text:"Vertieft ein Unternehmen sein bestehendes Sortiment durch zusätzliche ähnliche Modelle, ist das Produktdifferenzierung.", correct:true,
+      explain:"Richtig. Das Sortiment wird tiefer, nicht breiter." },
+    { text:"Bei der Produktvariation werden alte und neue Version dauerhaft parallel angeboten.", correct:false,
+      explain:"Falsch. Bei der Produktvariation wird nur noch die veränderte Version angeboten, die Vorgängerversion nicht mehr." },
+    { text:"Produktelimination bedeutet, ein nicht mehr erfolgreiches Produkt vom Markt zu nehmen.", correct:true,
+      explain:"Richtig. So werden Produkte aus dem Angebot ausgeschieden." },
+    { text:"Produktdifferenzierung verbreitert das Sortiment, Produktdiversifikation vertieft es.", correct:false,
+      explain:"Falsch. Es ist umgekehrt: Differenzierung vertieft, Diversifikation verbreitert das Sortiment." }
+  ]
+},
+
+{ id:"m11", topic:"marketing", difficulty:"schwer",
+  title:"Marktkennzahlen berechnen",
+  scenario:"Ein Unternehmen erzielt mit einem Produkt 6 Mio. Euro Umsatz. Das gesamte Marktvolumen beträgt 30 Mio. Euro; der größte Mitbewerber erzielt 12 Mio. Euro.",
+  stem:"Welche der folgenden Aussagen ist/sind korrekt?",
+  statements:[
+    { text:"Der absolute Marktanteil des Unternehmens beträgt 20 %.", correct:true,
+      explain:"Richtig. Absoluter Marktanteil = (6 ÷ 30) × 100 = 20 %." },
+    { text:"Der relative Marktanteil beträgt 0,5.", correct:true,
+      explain:"Richtig. Relativer Marktanteil = 6 ÷ 12 = 0,5 (Unternehmensumsatz ÷ Umsatz des größten Mitbewerbers)." },
+    { text:"Aufgrund des relativen Marktanteils ist das Unternehmen Marktführer.", correct:false,
+      explain:"Falsch. Ein relativer Marktanteil unter 1 zeigt, dass das Unternehmen NICHT Marktführer ist." },
+    { text:"Das Marktpotenzial ist die maximal mögliche Absatzmenge eines Produkts.", correct:true,
+      explain:"Richtig. Es zeigt, wie groß der Markt wäre, wenn alle Interessierten kaufen würden." },
+    { text:"Das Marktvolumen ist die tatsächlich verkaufte Menge des Produkts.", correct:true,
+      explain:"Richtig. Liegt es nahe am Marktpotenzial, ist der Markt nahezu gesättigt." }
+  ]
+},
+
+{ id:"m12", topic:"marketing", difficulty:"schwer",
+  title:"Preis und Käuferverhalten",
+  stem:"Welche der folgenden Aussagen zu Preis und Käuferverhalten ist/sind korrekt?",
+  statements:[
+    { text:"Bei einem Verkäufermarkt übersteigt die Nachfrage das Angebot.", correct:true,
+      explain:"Richtig. Verkäufer:innen haben mehr Verhandlungsmacht, die Preise tendieren nach oben." },
+    { text:"In einem Käufermarkt haben die Käufer:innen mehr Verhandlungsmacht.", correct:true,
+      explain:"Richtig. Übersteigt das Angebot die Nachfrage, können Käufer:innen die Preise stärker beeinflussen." },
+    { text:"Beim Snob-Effekt kauft man teuer, weil es andere auch tun.", correct:false,
+      explain:"Falsch. Das beschreibt den Mitläufer-Effekt. Beim Snob-Effekt kauft man teuer, um zu zeigen, dass man es sich leisten kann." },
+    { text:"Beim Qualitätseffekt schließt man vom hohen Preis auf eine höhere Qualität.", correct:true,
+      explain:"Richtig. Käufer:innen vermuten, dass teurere Produkte besser sind." },
+    { text:"Bei der Preisfestsetzung spielen Kosten, Konkurrenzpreise und Zahlungsbereitschaft eine Rolle.", correct:true,
+      explain:"Richtig. Das sind die drei wesentlichen Faktoren der Preisbildung in der Praxis." }
+  ]
+},
+
+{ id:"m13", topic:"marketing", difficulty:"schwer",
+  title:"Distribution und Franchising",
+  stem:"Welche der folgenden Aussagen zur Distributionspolitik ist/sind korrekt?",
+  statements:[
+    { text:"Beim direkten Absatz verkauft das produzierende Unternehmen ohne Zwischenhändler an den Endabnehmer.", correct:true,
+      explain:"Richtig. Bestellt man direkt beim Produzenten, handelt es sich um einen direkten Absatzweg." },
+    { text:"Beim indirekten Absatz sind Handelsbetriebe wie Groß- oder Einzelhändler zwischengeschaltet.", correct:true,
+      explain:"Richtig. Großhändler verkaufen an andere Händler, Einzelhändler an die Letztverbraucher." },
+    { text:"Der Franchisenehmer ist ein unselbstständiger Angestellter des Franchisegebers.", correct:false,
+      explain:"Falsch. Der Franchisenehmer ist rechtlich und wirtschaftlich selbständig, aber an das Marketingkonzept gebunden." },
+    { text:"Beim Franchising stellt der Franchisegeber Markenname, Produkte und Marketing-Know-how gegen Gebühr zur Verfügung.", correct:true,
+      explain:"Richtig. Die Franchisegebühr ist meist ein Fixbetrag plus Umsatzbeteiligung." },
+    { text:"Die Distributionspolitik betrifft den Absatzweg und den Transportweg.", correct:true,
+      explain:"Richtig. Sie beantwortet, wie und über welchen Weg das Produkt zum Kunden gelangt." }
+  ]
+},
+
+{ id:"m14", topic:"marketing", difficulty:"mittel",
+  title:"Kommunikationspolitik",
+  stem:"Welche der folgenden Aussagen zur Kommunikationspolitik ist/sind korrekt?",
+  statements:[
+    { text:"Zur Kommunikationspolitik zählen Werbung, Verkaufsförderung und Öffentlichkeitsarbeit.", correct:true,
+      explain:"Richtig. Dazu gehört auch der Internet- und Social-Media-Auftritt sowie 'Personal Selling'." },
+    { text:"Public Relations (PR) bezieht sich oft auf das gesamte Unternehmen, nicht nur auf einzelne Produkte.", correct:true,
+      explain:"Richtig. PR umfasst z. B. Pressekonferenzen, Presseaussendungen und Sponsoring." },
+    { text:"Social-Media-Marketing hat in den letzten Jahren an Bedeutung verloren.", correct:false,
+      explain:"Falsch. Social-Media-Marketing hat enorm an Bedeutung GEWONNEN, die Nutzerzahlen sind stark gestiegen." },
+    { text:"Personal Selling bezeichnet das Verhalten der Verkäufer:innen.", correct:true,
+      explain:"Richtig. Der persönliche Verkauf ist Teil der Kommunikationspolitik." },
+    { text:"Event-Marketing nutzt erlebnisorientierte Veranstaltungen, um Kund:innen zu aktivieren.", correct:true,
+      explain:"Richtig. Messen, Modeschauen oder Eröffnungen sollen Aufmerksamkeit erzeugen." }
+  ]
+},
+
+/* ===== DIGITALISIERUNG (Erweiterung) ===== */
+{ id:"d4", topic:"digitalisierung", difficulty:"mittel",
+  title:"Digitale Transformation",
+  stem:"Welche der folgenden Aussagen zur Digitalisierung ist/sind korrekt?",
+  statements:[
+    { text:"Digitalisierung meint die Anwendung digitaler Informations- und Kommunikationstechnologie und die dadurch vorangetriebene Veränderung.", correct:true,
+      explain:"Richtig. Diese Veränderung wird als digitale Transformation bezeichnet." },
+    { text:"'Ubiquitous Computing' beschreibt die Allgegenwärtigkeit von Rechensystemen.", correct:true,
+      explain:"Richtig. Technologie ist heute in nahezu allen Lebensbereichen präsent." },
+    { text:"Die Wirtschaftsinformatik beschäftigt sich u. a. mit den Auswirkungen von Technologie auf Wirtschaft und Gesellschaft.", correct:true,
+      explain:"Richtig. Sie untersucht, wie Technologie uns unterstützt und welche Folgen das hat." },
+    { text:"Die digitale Transformation betrifft ausschließlich die Werbung eines Unternehmens.", correct:false,
+      explain:"Falsch. Sie betrifft interne Prozesse, die Kundenbeziehung und die Gestaltung von Produkten und Dienstleistungen." },
+    { text:"Die digitale Transformation soll Nutzen und Erlebnis eines Produkts möglichst innovativ erweitern.", correct:true,
+      explain:"Richtig. Die Transformation soll nicht im Weg stehen, sondern den Nutzen erweitern." }
+  ]
+},
+
+{ id:"d5", topic:"digitalisierung", difficulty:"schwer",
+  title:"Die drei Dimensionen der Digitalisierung",
+  stem:"Welche der folgenden Aussagen zu den drei Dimensionen der Digitalisierung ist/sind korrekt?",
+  statements:[
+    { text:"Die 'Backstage'-Dimension betrifft die internen, wertschöpfenden Geschäftsprozesse hinter den Kulissen.", correct:true,
+      explain:"Richtig. Hier liegt der interne Fokus auf der effizienten Nutzung von Ressourcen." },
+    { text:"Die 'Frontstage'-Dimension ist auf den Kunden ausgerichtet (externer Fokus).", correct:true,
+      explain:"Richtig. Sie versteht sich als Verbindung zwischen Kunden und Unternehmen." },
+    { text:"Die dritte Dimension befasst sich mit der Digitalisierung der Produkte und Dienstleistungen ('smarte' Produkte).", correct:true,
+      explain:"Richtig. Das Ergebnis der Wertschöpfung wird durch Technologie erweitert." },
+    { text:"Ein Kunde kann im Sinne der Frontstage nur eine Privatperson sein.", correct:false,
+      explain:"Falsch. Ein Kunde kann eine Privatperson, ein Unternehmen oder eine öffentliche Institution sein." },
+    { text:"Die drei Dimensionen schließen einander aus; ein Unternehmen darf nur eine bearbeiten.", correct:false,
+      explain:"Falsch. Unternehmen können sich gezielt auf eine ODER mehrere Dimensionen konzentrieren." }
+  ]
+},
+
+{ id:"d6", topic:"digitalisierung", difficulty:"schwer",
+  title:"Der Geschäftsprozess",
+  stem:"Welche der folgenden Aussagen zum Geschäftsprozess ist/sind korrekt?",
+  statements:[
+    { text:"Ein Geschäftsprozess ist ein Arbeitsablauf aus mehreren logisch zusammenhängenden Aktivitäten.", correct:true,
+      explain:"Richtig. Er leistet einen Beitrag (Wert) zu einem betriebswirtschaftlichen Ziel." },
+    { text:"Geschäftsprozesse können wiederholt durchgeführt werden und haben einen klar definierten Anfang und ein oder mehrere Enden.", correct:true,
+      explain:"Richtig. Das unterscheidet sie von einmaligen, unstrukturierten Handlungen." },
+    { text:"Ein Prozessmodell ist ein visuelles Abbild eines Geschäftsprozesses.", correct:true,
+      explain:"Richtig. Es hilft, einen Prozess zu kommunizieren und einen Überblick zu gewinnen." },
+    { text:"Ein Geschäftsprozess leistet keinen Beitrag zu betriebswirtschaftlichen Zielen.", correct:false,
+      explain:"Falsch. Gerade das Leisten eines Wertbeitrags zu einem Ziel ist ein Kernmerkmal des Geschäftsprozesses." },
+    { text:"Die Dokumentation eines Prozesses durch ein digitales System erschwert die Kommunikation im Unternehmen.", correct:false,
+      explain:"Falsch. Die Dokumentation ERLEICHTERT die Kommunikation und den Überblick im Unternehmen." }
+  ]
+},
+
+{ id:"d7", topic:"digitalisierung", difficulty:"schwer",
+  title:"Das Geschäftsmodell",
+  stem:"Welche der folgenden Aussagen zum Geschäftsmodell ist/sind korrekt?",
+  statements:[
+    { text:"Ein Geschäftsmodell beschreibt, wie ein Unternehmen ein Produkt erzeugt, bereitstellt und vertreibt, um Gewinn zu erwirtschaften.", correct:true,
+      explain:"Richtig. Es beschreibt die Wertschöpfung von der Geschäftsidee bis zum Vertrieb." },
+    { text:"Der Einsatz von IT kann den geschaffenen Wert multiplizieren, z. B. durch mehr Kunden oder individualisierte Angebote.", correct:true,
+      explain:"Richtig. Technologie erweitert die Möglichkeiten der Wertschöpfung." },
+    { text:"Der Wechsel vom Einzelverkauf (Download) hin zum Streaming-Abo ist ein Beispiel für eine Geschäftsmodelländerung.", correct:true,
+      explain:"Richtig. Spotify hat das Geschäftsmodell vom Verkauf hin zum Streaming verändert." },
+    { text:"Ein Geschäftsmodell und ein Geschäftsprozess sind dasselbe.", correct:false,
+      explain:"Falsch. Ein Geschäftsmodell beschreibt die Logik der Wertschöpfung; ein Geschäftsprozess ist ein konkreter Arbeitsablauf." },
+    { text:"Apple veränderte mit iTunes das Geschäftsmodell, indem einzelne Musikstücke statt ganzer CDs verkauft wurden.", correct:true,
+      explain:"Richtig. Der legale Onlinevertrieb einzelner Titel revolutionierte den Musikkonsum." }
+  ]
+},
+
+{ id:"d8", topic:"digitalisierung", difficulty:"schwer",
+  title:"Internet versus World Wide Web",
+  stem:"Welche der folgenden Aussagen zu Internet und WWW ist/sind korrekt?",
+  statements:[
+    { text:"Das Internet ist ein weltweit verbundenes Netzwerk von Netzwerken.", correct:true,
+      explain:"Richtig. Es ist die wichtigste IT-Infrastruktur für die globale Vernetzung." },
+    { text:"Das WWW ist ein Dienst, der auf der Infrastruktur des Internets aufbaut.", correct:true,
+      explain:"Richtig. Das WWW ermöglicht es, Informationen bereitzustellen und auffindbar zu machen." },
+    { text:"Internet und WWW bezeichnen exakt dasselbe und sind technisch identisch.", correct:false,
+      explain:"Falsch. Das Internet ist das Netzwerk; das WWW ist nur einer der Dienste, die darauf aufbauen." },
+    { text:"Eine E-Mail ist ein weiterer Dienst, der das Internet zur Übertragung nutzt.", correct:true,
+      explain:"Richtig. Auch die E-Mail nutzt das Internet, ist aber nicht Teil des WWW." },
+    { text:"Der Web-Browser ist meist die direkte Schnittstelle, um auf das WWW zuzugreifen.", correct:true,
+      explain:"Richtig. Über den Browser greifen wir typischerweise auf Web-Inhalte zu." }
+  ]
+},
+
+{ id:"d9", topic:"digitalisierung", difficulty:"schwer",
+  title:"Tim Berners-Lee und die WWW-Konzepte",
+  stem:"Welche der folgenden Aussagen zur Entstehung des WWW ist/sind korrekt?",
+  statements:[
+    { text:"Tim Berners-Lee erfand 1989 während seiner Arbeit am CERN das World Wide Web.", correct:true,
+      explain:"Richtig. 1990 publizierte er dazu den Aufsatz 'Information Management: A Proposal'." },
+    { text:"Sein Aufsatz 'Information Management: A Proposal' legte den Grundstein für das Internet selbst.", correct:false,
+      explain:"Falsch. Er legte den Grundstein für das World Wide Web, nicht für das Internet." },
+    { text:"HTTP ist ein Protokoll für das Anfordern von Informationen von einem Server durch den Browser.", correct:true,
+      explain:"Richtig. Das Hypertext Transfer Protocol regelt diese Kommunikation." },
+    { text:"HTML ist ein System zur Adressierung von Informationen, um sie auffindbar zu machen.", correct:false,
+      explain:"Falsch. Das ist die Aufgabe der URL. HTML dient der Strukturierung von Informationen für die Darstellung im Browser." },
+    { text:"Die URL dient der einheitlichen Adressierung von Informationen.", correct:true,
+      explain:"Richtig. Der Uniform Resource Locator macht Informationen auffindbar und abrufbar." }
+  ]
+},
+
+{ id:"d10", topic:"digitalisierung", difficulty:"schwer",
+  title:"Protokoll und Netzwerk",
+  stem:"Welche der folgenden Aussagen zu Protokollen und Netzwerken ist/sind korrekt?",
+  statements:[
+    { text:"Ein Kommunikationsprotokoll hält Regeln fest, wie Rechner präzise miteinander kommunizieren sollen.", correct:true,
+      explain:"Richtig. Es legt z. B. fest, wie Meldungen und Antworten gestaltet werden müssen." },
+    { text:"Ein Protokoll im IT-Sinn ist dasselbe wie das Protokoll einer Besprechung.", correct:false,
+      explain:"Falsch. Ein Kommunikationsprotokoll ist etwas anderes als das schriftliche Protokoll einer Sitzung." },
+    { text:"Ein Netzwerk ist ein räumlich verteiltes System von Datenstationen, die zum Datenaustausch verbunden sind.", correct:true,
+      explain:"Richtig. Datenstationen sind z. B. PCs, Tablets oder Smartphones." },
+    { text:"Ein WLAN-Router ist ein Beispiel für eine Kommunikationseinrichtung.", correct:true,
+      explain:"Richtig. Auch das WLAN-Modul im Rechner zählt dazu." },
+    { text:"Kommunikationswege können nur kabelgebunden, niemals kabellos umgesetzt werden.", correct:false,
+      explain:"Falsch. Kommunikationswege können kabelgebunden oder kabellos sein." }
+  ]
+},
+
+{ id:"d11", topic:"digitalisierung", difficulty:"schwer",
+  title:"Client-Server und Request-Response",
+  stem:"Welche der folgenden Aussagen zur Architektur des WWW ist/sind korrekt?",
+  statements:[
+    { text:"In der Client-Server-Architektur stellt der Server Dienste über das Netzwerk bereit.", correct:true,
+      explain:"Richtig. Der Client (z. B. ein Browser) kann diese Dienste anfordern." },
+    { text:"Beim Request-Response-Prinzip stellt der Client eine Anfrage und der Server liefert eine Antwort.", correct:true,
+      explain:"Richtig. Der Browser fordert an (request), der Server antwortet (response)." },
+    { text:"Ein Server ist im Kern ein Rechner, der über das Netzwerk auf Anfragen wartet.", correct:true,
+      explain:"Richtig. Auf ihm läuft Server-Software, die Anfragen aus dem Internet bearbeitet." },
+    { text:"Die Server-Software sendet unaufgefordert HTML-Seiten an alle Browser im Internet.", correct:false,
+      explain:"Falsch. Der Server antwortet auf Anfragen; er sendet nicht unaufgefordert an alle Browser." },
+    { text:"Auf das WWW kann ausschließlich über einen Web-Browser zugegriffen werden.", correct:false,
+      explain:"Falsch. Auch Unternehmenssoftware kann über Schnittstellen mit anderen Systemen im Internet kommunizieren." }
+  ]
+},
+
+{ id:"d12", topic:"digitalisierung", difficulty:"schwer",
+  title:"Internetökonomie und digitale Plattformen",
+  stem:"Welche der folgenden Aussagen zur Internetökonomie ist/sind korrekt?",
+  statements:[
+    { text:"Die Internetökonomie umfasst die ökonomische Nutzung des Internets für wertschöpfende Transaktionen.", correct:true,
+      explain:"Richtig. Es entsteht ein digitaler Markt bzw. eine digitale Plattform." },
+    { text:"Ein Webshop wickelt Bestellungen ab, während eine Vergleichsplattform einen Überblick über Anbieter gibt.", correct:true,
+      explain:"Richtig. Beide sind Beispiele für Dienstleistungen im WWW." },
+    { text:"Auf einem digitalen Marktplatz (z. B. willhaben) können verschiedene Anbieter inklusive Privatpersonen auftreten.", correct:true,
+      explain:"Richtig. Der Marktplatz öffnet die Plattform für viele Anbieter; ein Webshop wird meist von einem Anbieter betrieben." },
+    { text:"Ein Plattformbetreiber ist für die Endkund:innen immer offensichtlich erkennbar.", correct:false,
+      explain:"Falsch. Oft ist es für Endkund:innen gar nicht offensichtlich, dass sie über einen Plattformbetreiber mit Händlern in Kontakt treten." },
+    { text:"Hyperlinks (URLs) verknüpfen Webseiten und machen das Web zu einem Netzwerk aus Ressourcen.", correct:true,
+      explain:"Richtig. Diese Verknüpfungen machen das Web zu dem, was es ist." }
+  ]
+}
+
+];
+
+</script>
+<script>
+/* ============================================================
+   WU Wien – Aufnahmeprüfung Wirtschaft – Prüfungssimulation
+   App-Logik. Format: Multiple-True-False mit Negativbewertung.
+   ============================================================ */
+
+const POINTS_PER_Q = 4;
+const LETTERS = ["A","B","C","D","E","F"];
+
+const state = {
+  screen: "start",
+  mode: "exam",          // "exam" (Feedback am Ende) | "practice" (sofort)
+  count: 20,
+  topicFilter: "all",
+  timed: false,
+  timeLimitSec: 0,
+  questions: [],         // selected & shuffled
+  answers: {},           // qid -> Set of checked statement indices
+  graded: {},            // qid -> true (in practice mode, once submitted)
+  current: 0,
+  startTs: 0,
+  timerId: null
+};
+
+/* ---------- utilities ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function el(html){
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+function esc(s){
+  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function fmtPts(n){
+  // round to 2 decimals, trim trailing zeros
+  const r = Math.round(n*100)/100;
+  return (r>0?"+":"") + (Number.isInteger(r)? r : r.toFixed(2).replace(/0$/,'').replace(/\.$/,''));
+}
+
+/* ---------- scoring (WU style) ---------- */
+function scoreQuestion(q, checkedSet){
+  const nTrue  = q.statements.filter(s=>s.correct).length;
+  const nFalse = q.statements.length - nTrue;
+  const posPer = nTrue  > 0 ? POINTS_PER_Q / nTrue  : 0;
+  const negPer = nFalse > 0 ? POINTS_PER_Q / nFalse : 0;
+  let raw = 0;
+  const perStatement = q.statements.map((s, i) => {
+    const checked = checkedSet.has(i);
+    let pts = 0, kind = "neutral";
+    if(checked && s.correct){ pts = posPer;  kind = "hit"; }     // +
+    else if(checked && !s.correct){ pts = -negPer; kind = "wrong"; } // -
+    else if(!checked && s.correct){ pts = 0; kind = "miss"; }    // missed
+    else { pts = 0; kind = "ok"; }                               // correctly left
+    raw += pts;
+    return { i, checked, correct:s.correct, pts, kind, posPer, negPer };
+  });
+  const score = Math.max(0, raw);   // floored at 0 per question
+  return { score, raw, perStatement, posPer, negPer, max: POINTS_PER_Q };
+}
+
+/* ---------- build a quiz ---------- */
+function buildQuiz(){
+  let pool = QUESTION_POOL.slice();
+  if(state.topicFilter !== "all"){
+    pool = pool.filter(q => q.topic === state.topicFilter);
+  }
+  pool = shuffle(pool);
+  const n = Math.min(state.count, pool.length);
+  // For each chosen question, shuffle statement order (keeping correctness)
+  state.questions = pool.slice(0, n).map(q => {
+    const order = shuffle(q.statements.map((_,i)=>i));
+    return {
+      ...q,
+      statements: order.map(i => q.statements[i])
+    };
+  });
+  state.answers = {};
+  state.graded = {};
+  state.current = 0;
+}
+
+/* ============================================================
+   RENDER: START
+   ============================================================ */
+function renderStart(){
+  const app = document.getElementById("view");
+  const topicOpts = Object.entries(TOPICS).map(([k,v]) =>
+    `<button class="choice-card topic-pick${state.topicFilter===k?' active':''}" data-topic="${k}">
+       <div class="t">${esc(v.short)}</div><div class="d">${esc(v.label)}</div>
+     </button>`).join("");
+
+  const today = new Date().toLocaleDateString("de-AT", {year:"numeric",month:"2-digit",day:"2-digit"});
+
+  app.innerHTML = `
+  <div class="sheet">
+    <span class="tab-corner">Prüfungsbogen</span>
+    <p class="cover-sub" style="margin-top:4px;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);">Aufnahmeverfahren · Wirtschafts- und Sozialwissenschaften</p>
+    <h1 class="cover-title">Wirtschaft verstehen — Testsimulation</h1>
+    <p class="cover-sub">Eine prüfungsnahe Simulation des Wirtschaftsteils im Stil der WU-Aufnahmeprüfung. Jede Aufgabe besteht aus fünf Aussagen (A–E), die einzeln als richtig oder falsch zu bewerten sind. <strong>Achtung: Negativbewertung</strong> — wie im echten Test bringt jede richtig angekreuzte Aussage Punkte, jede falsch angekreuzte Aussage zieht Punkte ab.</p>
+
+    <div class="cover-fields">
+      <div><span class="k">Fachbereich</span><span class="v">Wirtschaft (BW &amp; VW)</span></div>
+      <div><span class="k">Format</span><span class="v">Multiple-True-False</span></div>
+      <div><span class="k">Punkte / Aufgabe</span><span class="v">4,00</span></div>
+      <div><span class="k">Datum</span><span class="v">${esc(today)}</span></div>
+    </div>
+
+    <div class="option-block">
+      <span class="label">1 · Themenbereich</span>
+      <div class="choice-grid">
+        <button class="choice-card topic-pick${state.topicFilter==='all'?' active':''}" data-topic="all">
+          <div class="t">Gemischt</div><div class="d">Alle Themen kombiniert</div>
+        </button>
+        ${topicOpts}
+      </div>
+    </div>
+
+    <div class="option-block">
+      <span class="label">2 · Anzahl der Aufgaben</span>
+      <div class="choice-grid" id="count-grid">
+        ${[10,20,40,100].map(c=>`<button class="choice-card count-pick${state.count===c?' active':''}" data-count="${c}">
+            <div class="t">${c===100?'Alle':c+' Aufgaben'}</div>
+            <div class="d">${c===100?'gesamter Pool (400 P.)':'= '+(c*4)+' Punkte'}</div>
+          </button>`).join("")}
+      </div>
+    </div>
+
+    <div class="option-block">
+      <span class="label">3 · Modus</span>
+      <div class="choice-grid">
+        <button class="choice-card mode-pick${state.mode==='exam'?' active':''}" data-mode="exam">
+          <div class="t">Prüfungsmodus</div><div class="d">Auswertung erst am Ende</div>
+        </button>
+        <button class="choice-card mode-pick${state.mode==='practice'?' active':''}" data-mode="practice">
+          <div class="t">Übungsmodus</div><div class="d">Sofortiges Feedback je Aufgabe</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <span class="label">4 · Timer (optional)</span>
+      <div class="choice-grid">
+        <button class="choice-card timer-pick${!state.timed?' active':''}" data-timed="0">
+          <div class="t">Ohne Zeitlimit</div><div class="d">In eigenem Tempo</div>
+        </button>
+        <button class="choice-card timer-pick${state.timed?' active':''}" data-timed="1">
+          <div class="t">Mit Zeitlimit</div><div class="d">90 Sekunden je Aufgabe</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="start-actions">
+      <span class="start-note" id="start-note"></span>
+      <button class="btn" id="start-btn">Prüfung starten →</button>
+    </div>
+  </div>`;
+
+  // wire pickers
+  app.querySelectorAll(".topic-pick").forEach(b => b.onclick = () => {
+    state.topicFilter = b.dataset.topic; refreshStartActiveAndNote();
+  });
+  app.querySelectorAll(".count-pick").forEach(b => b.onclick = () => {
+    state.count = +b.dataset.count; refreshStartActiveAndNote();
+  });
+  app.querySelectorAll(".mode-pick").forEach(b => b.onclick = () => {
+    state.mode = b.dataset.mode; setActive(".mode-pick", b);
+  });
+  app.querySelectorAll(".timer-pick").forEach(b => b.onclick = () => {
+    state.timed = b.dataset.timed === "1"; setActive(".timer-pick", b);
+  });
+  document.getElementById("start-btn").onclick = startQuiz;
+  refreshStartActiveAndNote();
+
+  function setActive(sel, btn){
+    app.querySelectorAll(sel).forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+  }
+  function refreshStartActiveAndNote(){
+    setActive(".topic-pick", app.querySelector(`.topic-pick[data-topic="${state.topicFilter}"]`));
+    // recompute available count
+    const avail = state.topicFilter==="all" ? QUESTION_POOL.length
+      : QUESTION_POOL.filter(q=>q.topic===state.topicFilter).length;
+    app.querySelectorAll(".count-pick").forEach(b=>{
+      const c=+b.dataset.count;
+      b.classList.toggle("active", state.count===c);
+    });
+    const eff = Math.min(state.count, avail);
+    document.getElementById("start-note").textContent =
+      `${eff} Aufgaben · max. ${eff*4} Punkte`;
+  }
+}
+
+/* ============================================================
+   START / TIMER
+   ============================================================ */
+function startQuiz(){
+  buildQuiz();
+  state.screen = "quiz";
+  state.startTs = Date.now();
+  if(state.timed){
+    state.timeLimitSec = state.questions.length * 90;
+    startTimer();
+  }
+  renderQuiz();
+}
+
+function startTimer(){
+  stopTimer();
+  state.timerId = setInterval(() => {
+    const elapsed = Math.floor((Date.now()-state.startTs)/1000);
+    const remain = state.timeLimitSec - elapsed;
+    const pill = document.getElementById("timer");
+    if(pill){
+      const m = Math.floor(Math.max(0,remain)/60), s = Math.max(0,remain)%60;
+      pill.textContent = `⏱ ${m}:${String(s).padStart(2,"0")}`;
+      pill.classList.toggle("low", remain <= 60);
+    }
+    if(remain <= 0){ stopTimer(); finishQuiz(true); }
+  }, 1000);
+}
+function stopTimer(){ if(state.timerId){ clearInterval(state.timerId); state.timerId=null; } }
+
+/* ============================================================
+   RENDER: QUIZ
+   ============================================================ */
+function renderQuiz(){
+  const q = state.questions[state.current];
+  const idx = state.current;
+  const totalQ = state.questions.length;
+  const checked = state.answers[q.id] || new Set();
+  const isGraded = state.mode==="practice" && state.graded[q.id];
+
+  const app = document.getElementById("view");
+  const pct = Math.round((idx) / totalQ * 100);
+
+  const diffTag = `<span class="tag diff-${q.difficulty}">${q.difficulty}</span>`;
+  const topicTag = `<span class="tag">${esc(TOPICS[q.topic].short)}</span>`;
+  const caseTag = q.scenario ? `<span class="tag type-case">Fallbeispiel</span>` : "";
+  const bilanzTag = q.bilanz ? `<span class="tag type-calc">Bilanz</span>` : "";
+
+  const scenarioHtml = q.scenario ? `
+    <div class="scenario-box">
+      <span class="sc-label">Ausgangssituation</span>
+      ${q.scenario.split("\n").filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("")}
+    </div>` : "";
+
+  const bilanzHtml = q.bilanz ? renderBilanz(q.bilanz) : "";
+
+  // statements
+  const stmtRows = q.statements.map((s, i) => {
+    const on = checked.has(i);
+    let cls = "stmt", extra = "", pts = "";
+    if(isGraded){
+      const sc = scoreQuestion(q, checked).perStatement[i];
+      cls += " row-graded";
+      if(sc.kind==="hit")  { cls+=" g-hit";   pts = `<div class="pts pos">${fmtPts(sc.pts)}</div>`; }
+      if(sc.kind==="wrong"){ cls+=" g-wrong"; pts = `<div class="pts neg">${fmtPts(sc.pts)}</div>`; }
+      if(sc.kind==="miss") { cls+=" g-miss";  pts = `<div class="pts">0</div>`; }
+      if(sc.kind==="ok")   { cls+=" g-ok";    pts = `<div class="pts">0</div>`; }
+      extra = `<div class="stmt-expl">
+                 <span class="${s.correct?'v':'x'}">${s.correct?'Richtig':'Falsch'} · </span>${esc(s.explain)}
+               </div>`;
+    }
+    return `<div class="${cls}${on?' checked':''}" data-i="${i}" ${isGraded?'aria-disabled="true"':'role="checkbox" tabindex="0" aria-checked="'+on+'"'}>
+      <div class="letter">${LETTERS[i]}</div>
+      <div class="body">${esc(s.text)}</div>
+      <div class="check"><span class="box"></span></div>
+      ${pts}
+      ${extra}
+    </div>`;
+  }).join("");
+
+  // footer / nav
+  let footerRight = "";
+  if(state.mode==="practice" && !isGraded){
+    footerRight = `<button class="btn" id="grade-btn">Aufgabe prüfen</button>`;
+  } else {
+    const isLast = idx === totalQ-1;
+    footerRight = `<button class="btn" id="next-btn">${isLast?'Auswertung anzeigen →':'Weiter →'}</button>`;
+  }
+
+  // graded score line (practice)
+  let scoreLine = "";
+  if(isGraded){
+    const sc = scoreQuestion(q, checked);
+    const cls = sc.score===sc.max ? "full" : (sc.score===0 ? "zero" : "part");
+    scoreLine = `<div class="q-scoreline">
+        <span class="lbl">Aufgabenbewertung</span>
+        <span class="val ${cls}">${fmtPts(sc.score).replace('+','')} / ${sc.max} Punkte</span>
+      </div>`;
+  }
+
+  app.innerHTML = `
+    <div class="quiz-header">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>Aufgabe ${idx+1} / ${totalQ}</span>
+          <span>${pct}%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${Math.round((idx+ (isGraded?1:0))/totalQ*100)}%"></div></div>
+      </div>
+      ${state.timed ? `<div class="timer-pill" id="timer">⏱ --:--</div>` : ``}
+    </div>
+
+    <div class="sheet sheet--plain">
+      <span class="tab-corner">Max. 4 Punkte</span>
+      <div class="tagrow">${topicTag}${diffTag}${caseTag}${bilanzTag}</div>
+      ${q.title ? `<div class="q-number">Aufgabe ${idx+1}${q.title?' · '+esc(q.title):''}</div>` : ``}
+      ${scenarioHtml}
+      ${bilanzHtml}
+      <p class="q-text">${esc(q.stem)}</p>
+      <p class="q-hint">Mehrfachauswahl — kreuzen Sie alle zutreffenden Aussagen an. Richtige Auswahl bringt Punkte, falsche Auswahl zieht Punkte ab.</p>
+      <div class="stmt-list">${stmtRows}</div>
+      ${scoreLine}
+    </div>
+
+    <div class="quiz-footer">
+      ${idx>0 ? `<button class="btn btn--ghost" id="prev-btn">← Zurück</button>` : `<span></span>`}
+      <span class="spacer"></span>
+      <button class="btn btn--ghost" id="abort-btn">Beenden</button>
+      ${footerRight}
+    </div>`;
+
+  // restart timer display
+  if(state.timed) startTimer();
+
+  // wire statements (only if not graded)
+  if(!isGraded){
+    app.querySelectorAll(".stmt").forEach(row => {
+      const toggle = () => {
+        const i = +row.dataset.i;
+        if(!state.answers[q.id]) state.answers[q.id] = new Set();
+        const set = state.answers[q.id];
+        if(set.has(i)){ set.delete(i); row.classList.remove("checked"); row.setAttribute("aria-checked","false"); }
+        else { set.add(i); row.classList.add("checked"); row.setAttribute("aria-checked","true"); }
+      };
+      row.onclick = toggle;
+      row.onkeydown = (e) => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggle(); } };
+    });
+  }
+
+  // wire nav
+  const prev = document.getElementById("prev-btn");
+  if(prev) prev.onclick = () => { state.current--; renderQuiz(); window.scrollTo(0,0); };
+
+  const grade = document.getElementById("grade-btn");
+  if(grade) grade.onclick = () => { state.graded[q.id] = true; renderQuiz(); };
+
+  const next = document.getElementById("next-btn");
+  if(next) next.onclick = () => {
+    if(state.current === totalQ-1){ finishQuiz(false); }
+    else { state.current++; renderQuiz(); window.scrollTo(0,0); }
+  };
+
+  document.getElementById("abort-btn").onclick = () => {
+    if(confirm("Prüfung wirklich beenden? Der bisherige Fortschritt wird ausgewertet.")) finishQuiz(false);
+  };
+
+  updateFileNo();
+}
+
+function renderBilanz(b){
+  const rows = Math.max(b.aktiva.length, b.passiva.length);
+  let body = "";
+  for(let i=0;i<rows;i++){
+    const a = b.aktiva[i], p = b.passiva[i];
+    body += `
+      <div class="${a&&a.head?'grp':''}">${a?esc(a.name):""}</div>
+      <div class="amt ${a&&a.head?'grp':''}">${a&&a.value?esc(a.value):""}</div>
+      <div class="${p&&p.head?'grp':''} col-sep">${p?esc(p.name):""}</div>
+      <div class="amt ${p&&p.head?'grp':''}">${p&&p.value?esc(p.value):""}</div>`;
+  }
+  return `
+  <div class="qbilanz">
+    <div class="qbilanz-head">
+      <div>Aktiva (Vermögen)</div><div class="amt">Betrag</div>
+      <div class="col-sep">Passiva (Kapital)</div><div class="amt">Betrag</div>
+    </div>
+    <div class="qbilanz-body">${body}</div>
+    <div class="qbilanz-foot">
+      <div>Bilanzsumme</div><div class="amt">${esc(b.summe)}</div>
+      <div class="col-sep">Bilanzsumme</div><div class="amt">${esc(b.summe)}</div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   FINISH & RESULTS
+   ============================================================ */
+function finishQuiz(timedOut){
+  stopTimer();
+  state.screen = "results";
+  renderResults(timedOut);
+  window.scrollTo(0,0);
+}
+
+function renderResults(timedOut){
+  const app = document.getElementById("view");
+
+  // compute scores
+  let totalScore = 0, maxScore = 0;
+  const perTopic = {};   // topic -> {score,max}
+  const reviews = [];
+
+  state.questions.forEach(q => {
+    const checked = state.answers[q.id] || new Set();
+    const sc = scoreQuestion(q, checked);
+    totalScore += sc.score; maxScore += sc.max;
+    if(!perTopic[q.topic]) perTopic[q.topic] = {score:0,max:0};
+    perTopic[q.topic].score += sc.score;
+    perTopic[q.topic].max += sc.max;
+    reviews.push({ q, sc, checked });
+  });
+
+  const pct = maxScore>0 ? Math.round(totalScore/maxScore*100) : 0;
+  const scoreRounded = Math.round(totalScore*100)/100;
+
+  // headline
+  let head, msg;
+  if(pct>=80){ head="Ausgezeichnet"; msg="Sie beherrschen den Stoff sehr sicher und treffen auch bei kniffligen Aussagen die richtige Entscheidung."; }
+  else if(pct>=60){ head="Solide Leistung"; msg="Ein gutes Ergebnis. Mit etwas Feinschliff bei einzelnen Themen ist noch mehr drin."; }
+  else if(pct>=40){ head="Auf gutem Weg"; msg="Die Grundlagen sitzen teilweise. Konzentrieren Sie sich auf die unten markierten Schwächen."; }
+  else { head="Noch Luft nach oben"; msg="Hier lohnt sich gezieltes Wiederholen. Die Themenauswertung zeigt, wo Sie ansetzen sollten."; }
+
+  // sort topics by performance for "balance sheet" (strengths = aktiva, weaknesses = passiva)
+  const topicRows = Object.entries(perTopic).map(([k,v]) => ({
+    key:k, label:TOPICS[k].short, pct: v.max>0?Math.round(v.score/v.max*100):0, score:v.score, max:v.max
+  }));
+  const strengths = topicRows.filter(t=>t.pct>=60).sort((a,b)=>b.pct-a.pct);
+  const weaknesses = topicRows.filter(t=>t.pct<60).sort((a,b)=>a.pct-b.pct);
+
+  const balRow = t => `<div class="balance-row"><span class="name">${esc(t.label)}</span><span class="pct">${t.pct}% (${fmtPts(t.score).replace('+','')}/${t.max})</span></div>`;
+
+  const aktivaHtml = strengths.length ? strengths.map(balRow).join("")
+    : `<div class="balance-empty">Noch keine Themen über 60 % — hier ist Potenzial.</div>`;
+  const passivaHtml = weaknesses.length ? weaknesses.map(balRow).join("")
+    : `<div class="balance-empty">Keine ausgeprägten Schwächen — gut gemacht!</div>`;
+
+  // tips from weakest topics
+  const tipBank = {
+    grundlagen: "Wiederholen Sie Markt- und Wettbewerbsformen (Monopol/Oligopol/Polypol vs. Monopson), Angebot/Nachfrage, BIP vs. BNP sowie die Ursachen der Inflation.",
+    nachhaltigkeit: "Schärfen Sie den Unterschied zwischen schwacher und starker Nachhaltigkeit und merken Sie sich: 7 von 9 planetaren Grenzen sind überschritten.",
+    unternehmen: "Üben Sie die Haftung je Rechtsform und die Mindestkapital-Beträge: GmbH 10.000 €, AG 70.000 €, SE 120.000 €.",
+    finanzierung: "Trennen Sie sauber Eigen-/Fremdkapital und Innen-/Außenfinanzierung; Aktie = Anteilsrecht, Anleihe = Forderungsrecht.",
+    rechnungswesen: "Trainieren Sie die Bilanzlogik (Aktiva = Passiva), Deckungsbeitrag und Break-Even sowie den Unterschied Gewinn ↔ Cashflow.",
+    marketing: "Festigen Sie die 4 Ps, Markt­anteil (absolut/relativ), den Produktlebenszyklus und die Käuferverhaltens-Effekte (Snob/Mitläufer/Qualität).",
+    digitalisierung: "Merken Sie sich: Internet = Netz von Netzen, WWW = Dienst darauf; HTTP/HTML/URL und das Request-Response-Prinzip."
+  };
+  const tipList = (weaknesses.length?weaknesses:topicRows.sort((a,b)=>a.pct-b.pct).slice(0,2))
+    .map(t=>`<li><strong>${esc(t.label)} (${t.pct}%):</strong> ${esc(tipBank[t.key]||"")}</li>`).join("");
+
+  // review items
+  const reviewHtml = reviews.map((r, idx) => {
+    const cls = r.sc.score===r.sc.max ? "ok" : (r.sc.score===0 ? "bad" : "");
+    const badge = r.sc.score===r.sc.max
+      ? `<span class="badge-result ok">${fmtPts(r.sc.score).replace('+','')}/4</span>`
+      : `<span class="badge-result ${r.sc.score===0?'bad':'ok'}">${fmtPts(r.sc.score).replace('+','')}/4</span>`;
+    const stmts = r.q.statements.map((s,i)=>{
+      const c = r.checked.has(i);
+      const sym = s.correct
+        ? (c?'✓ richtig erkannt':'– übersehen (war richtig)')
+        : (c?'✗ falsch angekreuzt':'✓ korrekt nicht gewählt');
+      const col = s.correct ? (c?'var(--green)':'var(--amber)') : (c?'var(--red)':'var(--ink-faint)');
+      return `<div style="display:flex;gap:8px;margin:4px 0;font-size:.82rem;">
+                <span style="font-family:var(--f-mono);color:var(--ink-faint);flex-shrink:0;">${LETTERS[i]}</span>
+                <span style="flex:1;color:var(--ink-soft);">${esc(s.text)}</span>
+                <span style="flex-shrink:0;color:${col};font-family:var(--f-mono);font-size:.72rem;white-space:nowrap;">${sym}</span>
+              </div>`;
+    }).join("");
+    return `<div class="review-item">
+      <div class="rh">
+        <div>
+          <div class="q-number">Aufgabe ${idx+1} · ${esc(TOPICS[r.q.topic].short)}${r.q.title?' · '+esc(r.q.title):''}</div>
+          <div class="rq">${esc(r.q.stem)}</div>
+        </div>
+        ${badge}
+      </div>
+      ${stmts}
+    </div>`;
+  }).join("");
+
+  const elapsed = Math.floor((Date.now()-state.startTs)/1000);
+  const em = Math.floor(elapsed/60), es = elapsed%60;
+
+  app.innerHTML = `
+    <div class="sheet">
+      <span class="tab-corner">Auswertung</span>
+      ${timedOut?`<p class="cover-sub" style="color:var(--red);font-weight:600;">⏱ Zeit abgelaufen — die Prüfung wurde automatisch abgegeben.</p>`:""}
+      <div class="score-hero">
+        <div class="score-circle">
+          <span class="num">${pct}<span style="font-size:1.1rem;">%</span></span>
+          <span class="pct">${fmtPts(scoreRounded).replace('+','')} / ${maxScore} Pkt</span>
+        </div>
+        <div class="score-headline">
+          <h2>${esc(head)}</h2>
+          <p>${esc(msg)}</p>
+          <p style="font-family:var(--f-mono);font-size:.75rem;color:var(--ink-faint);margin-top:8px;">
+            ${state.questions.length} Aufgaben · Bearbeitungszeit ${em}:${String(es).padStart(2,"0")} min
+          </p>
+        </div>
+      </div>
+
+      <div class="balance-title">Themen-Bilanz</div>
+      <div class="balance-sheet">
+        <div class="balance-col">
+          <div class="balance-head aktiva">Stärken (≥ 60 %)</div>
+          ${aktivaHtml}
+        </div>
+        <div class="balance-col">
+          <div class="balance-head passiva">Aufholbedarf (&lt; 60 %)</div>
+          ${passivaHtml}
+        </div>
+        <div class="balance-foot">
+          <span>Gesamtergebnis</span>
+          <span>${fmtPts(scoreRounded).replace('+','')} / ${maxScore} Punkte · ${pct}%</span>
+        </div>
+      </div>
+
+      <div class="tips">
+        <h3>Empfehlungen zur Vertiefung</h3>
+        <ul>${tipList}</ul>
+      </div>
+
+      <details class="review-toggle">
+        <summary>Aufgabenübersicht anzeigen (${state.questions.length} Aufgaben)</summary>
+        <div class="review-list" style="margin-top:14px;">${reviewHtml}</div>
+      </details>
+
+      <div class="start-actions" style="margin-top:26px;">
+        <button class="btn btn--ghost" id="again-same">Neue Aufgaben, gleiche Einstellungen</button>
+        <button class="btn" id="restart">Zur Startseite</button>
+      </div>
+    </div>`;
+
+  document.getElementById("restart").onclick = () => { state.screen="start"; renderStart(); window.scrollTo(0,0); };
+  document.getElementById("again-same").onclick = () => { startQuiz(); window.scrollTo(0,0); };
+  updateFileNo();
+}
+
+/* ---------- file number in masthead ---------- */
+function updateFileNo(){
+  const e = document.getElementById("file-no");
+  if(!e) return;
+  const total = QUESTION_POOL.length;
+  if(state.screen==="quiz") e.textContent = `Bogen ${state.current+1}/${state.questions.length} · Pool ${total} Aufg.`;
+  else if(state.screen==="results") e.textContent = `Auswertung · ${state.questions.length} Aufg.`;
+  else e.textContent = `Pool: ${total} Aufgaben`;
+}
+
+/* ---------- boot ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  renderStart();
+  updateFileNo();
+});
+
+</script>
+</body>
+</html>
